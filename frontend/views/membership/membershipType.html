@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/form.css">
+    <title>Document</title>
+</head>
+<body>
+    <form class="form" id="form_membership">
+      <h2>REGISTRAR TIPO DE MEMBRESÍA</h2>
+      <div class="input_data_container" id="input_container_membership">
+        <!---Name Name -->
+        <div class="input_container">
+          <label for="name" class="field_name">Nombre</label>
+          <input type="text" class="field_data" onkeypress="return ' ÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZáéíóúabcdefghijklmnñopqrstuvwxyz'.includes(event.key)" id="name"/>
+          <p class="error" id="name_error"></p>
+        </div>
+        <!---Name Price -->
+        <div class="input_container">
+          <label for="price" class="field_name">Precio</label>
+          <input type="text" class="field_data" onkeypress="return '0123456789'.includes(event.key)" id="price"/>
+          <p class="error" id="price_error"></p>
+        </div>
+        <!---Name Duration -->
+        <div class="input_container">
+          <label for="duration" class="field_name">Duration</label>
+          <input type="text" class="field_data" onkeypress="return '0123456789'.includes(event.key)" id="duration"/>
+          <p class="error" id="duration_error"></p>
+        </div>
+        <!---Name Description -->
+        <div class="input_container">
+          <label for="description" class="field_name">Description</label>
+          <textarea class="field_data" id="description"></textarea>
+          <p class="error" id="description_error"></p>
+        </div>
+      <!--Button group-->
+      <div class="dialog-container">
+        <dialog id="alert-dialog">
+        <h3>Confirmar Registro</h3>
+        <div class="button_container_modal">
+          <button id="close_modal" class="btn_submit_modal cancel">Cerrar</button>
+          <button id="modal_submit" class="btn_submit_modal confirm">Confirmar</button>
+        </div>
+      </dialog>
+      </div>
+      <div class="toast_container"></div>
+      <div class="button_container">
+        <button type="button" class="btn_form btn_cancel">Cancelar</button>
+        <button type="button" class="btn_form btn_submit">Añadir</button>
+      </div>
+    </form>
+    <script type="module" src="../../controllers/membership/membershipType.js"></script>
+    
+</body>
+</html>

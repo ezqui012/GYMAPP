@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/list.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="frame_list_container">
+      <h3>LISTA DE CLIENTES</h3>
+      <div class="list_container">
+        <div class="list_actions">
+          <div class="searchbar_container">
+            <input
+              id="searchbar"
+              type="search"
+              class="searchbar_field"
+              placeholder="Buscar...."
+            />
+            <button class="search_button">
+              <img src="/assets/icons/lupa.svg" alt="" />
+            </button>
+          </div>
+          <button class="add_client">Añadir Cliente</button>
+        </div>
+        <div class="list">
+          <table class="table_container">
+            <thead>
+              <tr class="header_row">
+                <th class="head_data">Nombre</th>
+                <th class="head_data">Apellido</th>
+                <th class="head_data">Expira</th>
+                <th class="head_data">CI</th>
+                <th class="head_data">Correo</th>
+                <th class="head_data action">Acciòn</th>
+              </tr>
+            </thead>
+            <tbody class="tbody_container"></tbody>
+          </table>
+        </div>
+        <div class="container_button_change">
+          <button class="btn_page back_btn"><i class="fa-sharp fa-solid fa-arrow-left"></i></button>
+          <div class="btn_numbers"></div>
+          <button class="btn_page forward_btn"><i class="fa-sharp fa-solid fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/controllers/clients/clientList.js"></script>
+  </body>
+</html>

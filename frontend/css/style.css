@@ -1,0 +1,75 @@
+body{
+    margin: 0;
+    background-color: #333339;
+}
+.feature_container{
+    display: grid;
+    place-items: center;
+    background-color: #333339;
+    height: 100vh;
+    
+}
+h3{
+    color: #FF6F61;
+    font-size: 30px;
+    
+}
+.login_container{
+    background-color: #333333;
+    border: 1px solid #A2A2A2;
+    border-radius: 8px;
+    padding: 30px;
+    width: 350px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    
+}
+.input_container{
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+    height: 150px;
+    width: 250px;
+    
+}
+input{
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+}
+.field_user{
+    outline: none;
+}
+.label_user{
+    color: #FF6F61;    
+}
+.submit_button{
+    color: #FF6F61;
+    background-color: #3C3C3C;
+    border-radius: 8px;
+    border: none;
+    padding: 10px;
+    width: 200px;
+    margin-bottom: 5px;
+}
+.submit_button:hover{
+    background-color: #2C2C2c;
+    color: #FF4F41;
+    
+}
+a{
+    color: #48e;
+}
+
+
+/*APP HOME*/
+
+
+
+
+
+
+

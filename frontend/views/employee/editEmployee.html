@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/form.css">
+    <title>Editar Cliente</title>
+</head>
+<body>
+    <form class="form" id="form_employee">
+      <h2>ACTUALIZAR DATOS EMPLEADO</h2>
+      <div class="input_data_container">
+        <!---Name Name -->
+        <div class="input_container">
+          <label for="name" class="field_name">Nombre</label>
+          <input type="text" class="field_data name" onkeypress="return ' ÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZáéíóúabcdefghijklmnñopqrstuvwxyz'.includes(event.key)" id="name"/>
+          <p class="error" id="name_error"></p>
+        </div>
+        <!---Name Email -->
+        <div class="input_container">
+          <label for="email" class="field_name">Correo</label>
+          <input type="text" class="field_data email" id="email"/>
+          <p class="error" id="email_error"></p>
+        </div>
+        <!---Name Lastname -->
+        <div class="input_container">
+          <label for="lastName" class="field_name">Apellido</label>
+          <input type="text" class="field_data lastName" onkeypress="return ' ÁÉÍÓÚABCDEFGHIJKLMNÑOPQRSTUVWXYZáéíóúabcdefghijklmnñopqrstuvwxyz'.includes(event.key)" id="lastName"/>
+          <p class="error" id="lastName_error"></p>
+        </div>
+        <!---Name Phone -->
+        <div class="input_container">
+          <label for="phone" class="field_name">Teléfono</label>
+          <input type="text" class="field_data" onkeypress="return '0123456789'.includes(event.key)" id="phone"/>
+          <p class="error" id="phone_error"></p>
+        </div>
+        <!---Name CI -->
+        <div class="input_container">
+          <label for="ci" class="field_name" >CI</label>
+          <input type="text" class="field_data" onkeypress="return '0123456789'.includes(event.key)" id="ci" />
+          <p class="error" id="ci_error"></p>
+        </div>
+        <!---Name Profile -->
+        <div class="input_container">
+          <label for="photo" class="field_name">Foto de Perfil</label>
+          <input type="file" class="field_data" id="photo" accept="image/*"/>
+          <p class="error" id="photo_error"></p>
+        </div>
+        <!---Name Schedule -->
+        <div class="input_container">
+          <label for="schedule" class="field_name">Horario</label>
+          <select class="field_data" id="schedule">
+            <option value="schedule0" class="mebresia1">Asignar Horario</option>
+            <option value="schedule1" class="mebresia1">Mañana</option>
+            <option value="schedule2" class="mebresia2">Tarde</option>
+            <option value="schedule3" class="mebresia3">Noche</option>
+          </select>
+          <p class="error" id="schedule_error"></p>
+        </div>
+        <!---Name TypeEmp -->
+        <div class="input_container">
+          <label for="role" class="field_name"> Tipo de Empleado</label>
+          <select class="field_data" id="role">
+            <option value="role0" >Elige un rol</option>
+            <option value="role1" >Recepciòn</option>
+            <option value="role2" >Instructor</option>
+            <option value="role3" >Administrador</option>
+          </select>
+          <p class="error" id="role_error"></p>  
+        </div>
+      </div>
+      <!--Button group-->
+      <div class="dialog-container">
+        <dialog id="alert-dialog">
+        <h3>Confirmar Registro</h3>
+        <div class="button_container_modal">
+          <button type="button" id="close_modal" class="btn_submit_modal cancel">Cerrar</button>
+          <button id="modal_submit" class="btn_submit_modal confirm">Confirmar</button>
+        </div>
+      </dialog>
+      </div>
+      <div class="toast_container"></div>
+      <div class="button_container">
+        <button type="button" class="btn_form btn_cancel">Cancelar</button>
+        <button type="button" class="btn_form btn_submit">Guardar</button>
+      </div>
+    </form>
+    <script type="module" src="../../controllers/employee/editEmployee.js"></script>
+</body>
+</html>
