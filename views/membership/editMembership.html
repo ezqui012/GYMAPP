@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/form.css">
+    <title>Document</title>
+</head>
+<body>
+    <form class="form" id="form_membership">
+      <h2>MODIFICAR MEMBRESÍA</h2>
+      <div class="input_data_container_membership">
+        <!---Client List -->
+        <div class="input_container">
+          <label for="client" class="field_name">Cliente</label>
+          <select class="field_data membershipType" name="client" id="client"></select>
+          <p class="error" id="client_error"></p>
+        </div>
+        <!---Membership Type -->
+        <div class="input_container">
+          <label for="membershipType" class="field_name">Tipo de Membresia</label>
+          <select class="field_data membershipType" name="memberType" id="membershipType"></select>
+          <p class="error" id="membershipType_error"></p>
+        </div>
+        <!---Init Date-->
+        <div class="input_container">
+          <label for="dateClientEntry" class="field_name">Fecha de ingreso</label>
+          <input type="date" class="field_data membershipType" id="dateClientEntry""/>
+          <p class="error" id="dateClientEntry_error"></p>
+        </div>
+        
+        <!---Membership Data -->
+        <div class="section_data_container">
+          <p class="membership_data price_data"></p>
+          <p class="membership_data duration_data"></p>
+          <p class="membership_data initDate_data"></p>
+          <p class="membership_data endDate_data"></p>
+        </div>
+      <!--Button group-->
+      <div class="dialog-container">
+        <dialog id="alert-dialog">
+        <h3>Confirmar Registro</h3>
+        <div class="button_container_modal">
+          <button type="button" id="close_modal" class="btn_submit_modal cancel">Cerrar</button>
+          <button id="modal_submit" class="btn_submit_modal confirm">Confirmar Cambios</button>
+        </div>
+      </dialog>
+      </div>
+      <div class="toast_container"></div>
+      <div class="button_container">
+        <button type="button" class="btn_form btn_cancel">Cancelar</button>
+        <button type="button" class="btn_form btn_submit">Guardar</button>
+      </div>
+    </form>
+    <script type="module" src="../../controllers/membership/membership.js"></script>
+</body>
+</html>

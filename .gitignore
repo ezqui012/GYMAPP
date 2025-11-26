@@ -1,0 +1,24 @@
+# Evitar carpetas del sistema
+$RECYCLE.BIN/
+*.lnk
+*.tmp
+*.exe
+*.pdf
+*.log
+*.DS_Store
+Thumbs.db
+
+# Node y dependencias (si usás npm más adelante)
+node_modules/
+dist/
+.env
+
+# Archivos temporales
+*.log
+*.tmp
+
+
+# Carpetas ocultas y basuras
+**/.git
+Nuevo vol/
+League of Legends/
