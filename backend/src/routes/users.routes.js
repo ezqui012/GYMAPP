@@ -1,12 +1,16 @@
 import { Router } from "express";
-import { pool } from "../db.js";
-const router=Router();
+import { createUser, deleteUser, getUser, getUsers, updateUser } from "../controllers/users.controllers.js";
 
+const router = Router();
 
-router.get('/users',async (req,res)=>{
-    const {rows} = await pool.query(`SELECT * from person`);
-   res.json(rows);
+router.get("/users", getUsers);
 
-})
+router.get("/users/:id", getUser);
+
+router.post("/users/", createUser);
+
+router.put("/users/:id", updateUser);
+
+router.delete("/users/:id", deleteUser);
 
 export default router;
