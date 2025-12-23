@@ -18,7 +18,6 @@ export const createUser = async (req, res)=>{
     
     try {
         const data=req.body;
-        console.log(data)
         const {rows}= await pool.query(`INSERT INTO person (name, lastname, phone, photo, ci, nit, email, person_type) 
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`, [data.name, data.lastname, data.phone, data.photo , data.ci, data.nit, data.email, data.person_type]);
         return res.json(rows[0]);
@@ -55,7 +54,6 @@ export const deleteUser=async (req,res)=>{
     }
     console.log(rowCount);
     return res.sendStatus(204);
-
 }
 
 
