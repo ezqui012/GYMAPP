@@ -1,4 +1,3 @@
-import e from "express";
 import { pool } from "../db.js";
 
 export const getClients = async (req, res) => {
@@ -56,9 +55,11 @@ export const createClient = async (req, res) => {
     return res.status(201).json("Client registered sucessfully");
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      message: "Internal server error",
-    });
+    if (error?.code === "23505") {
+      return res.status(409).json({ message: "Email already Exist" });
+    }
+
+    return res.status(505).json({ message: "Internal error", error });
   }
 };
 
@@ -66,7 +67,8 @@ export const updateClient = async (req, res) => {
   try {
     const { id } = req.params;
     const clientData = req.body;
-    const { rowCount } = await pool.query(`UPDATE person SET name='${clientData.name}', lastname='${clientData.lastname}',
+    const { rowCount } =
+      await pool.query(`UPDATE person SET name='${clientData.name}', lastname='${clientData.lastname}',
     phone='${clientData.phone}', photo='${clientData.photo}', ci='${clientData.ci}', nit='${clientData.nit}', email='${clientData.email}' 
     WHERE id_person=${id}`);
     if (rowCount === 0) {
@@ -85,10 +87,8 @@ export const deleteClient = async (req, res) => {
   try {
     const { id } = req.params;
     const { rowCount } = await pool.query(
-      "DELETE FROM client c WHERE c.id_client=$1",
-      [id]
-    );
-    console.log(rowCount);
+      "DELETE FROM client c WHERE c.id_client=$1", [id]);
+
     if (rowCount === 0) {
       return res.status(404).json({ message: "User not found" });
     }
