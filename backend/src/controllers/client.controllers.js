@@ -52,7 +52,7 @@ export const createClient = async (req, res) => {
     const clientId = clientData.rows[0].id_person;
     await pool.query(`INSERT INTO client (id_client) VALUES ($1)`, [clientId]);
 
-    return res.status(201).json("Client registered sucessfully");
+    return res.status(201).json("Client registered successfully");
   } catch (error) {
     console.error(error);
     if (error?.code === "23505") {

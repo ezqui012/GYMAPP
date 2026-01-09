@@ -57,7 +57,7 @@ export const createEmployee = async (req, res) => {
   } catch (error) {
     console.error(error);
     if (error?.code === "23505") {
-      return res.status(409).json({ message: "Email already Exist" });
+      return res.status(409).json({ message: "Employee already Exist" });
     }
 
     return res.status(505).json({ message: "Internal error", error });
