@@ -5,8 +5,8 @@ import membershipTypeRoutes from './routes/membership_type.routes.js';
 import membershipRoutes from './routes/membership.routes.js';
 import clientRoutes from './routes/client.routes.js'
 import employeeRoutes from './routes/employee.routes.js';
-
-import { PORT } from "./config.js";
+import authRoutes from './modules/auth/auth.routes.js';
+import { PORT } from "./config/config.js";
 
 const app=express();
 
@@ -17,5 +17,6 @@ app.use(membershipTypeRoutes);
 app.use(membershipRoutes);
 app.use(clientRoutes)
 app.use(employeeRoutes);
+app.use(authRoutes);
 app.listen(PORT);
 console.log(`Server Running on port: http://localhost:${PORT}`);
