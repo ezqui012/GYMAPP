@@ -1,13 +1,13 @@
-import { pool } from "../db.js";
+import { pool } from "../config/db.js";
 
 export const getEmployees = async (req, res) => {
   try {
-    const employeeList = await pool.query(
-      `SELECT p.* FROM person p INNER JOIN employee e ON p.id_person=id_employee`
+    const {rows} = await pool.query(
+      `SELECT p.* FROM person p INNER JOIN employee e ON p.id_person=e.id_employee`
     );
-    const employeeDate = employeeList.rows[0];
+   
 
-    return res.status(200).json(employeeDate);
+    return res.status(200).json(rows);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching clients" });
