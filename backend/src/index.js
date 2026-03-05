@@ -3,7 +3,9 @@ import morgan from "morgan";
 import usersRoutes from './routes/users.routes.js';
 import membershipTypeRoutes from './routes/membership_type.routes.js';
 import membershipRoutes from './routes/membership.routes.js';
-import clientRoutes from './routes/client.routes.js'
+
+//import clientRoutess from './routes/client.routes.js';
+import clientRoutes from './modules/clients/client.routes.js';
 import employeeRoutes from './routes/employee.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import { PORT } from "./config/config.js";
