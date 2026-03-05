@@ -1,4 +1,4 @@
-import { pool } from "../db.js";
+import { pool } from "../config/db.js";
 
 export const getMembershipTypes = async (req, res) => {
   const { rows } = await pool.query(`SELECT * from membership_type`);
