@@ -49,3 +49,16 @@ export const updateEmployee=async(req,res)=>{
          res.status(500).json({message: "Internal servers error"});
     }
 }
+
+
+export const deleteEmployee=async(req,res)=>{
+    try {
+        const {id} = req.params;
+        const deleted= await employeeService.deleteEmployee(id)
+        if(deleted===0) return res.status(404).json({ message: "User not found" });
+        
+        res.status(202).json("Request was done sucessfully")
+    } catch (error) {
+        return res.status(500).json({message: "Internal server error"});
+    }
+}
