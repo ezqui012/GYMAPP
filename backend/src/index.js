@@ -6,7 +6,8 @@ import membershipRoutes from './routes/membership.routes.js';
 
 //import clientRoutess from './routes/client.routes.js';
 import clientRoutes from './modules/clients/client.routes.js';
-import employeeRoutes from './routes/employee.routes.js';
+import employeeRoutes from './modules/employees/employee.routes.js';
+//import employeeRoutess from './routes/employee.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import { PORT } from "./config/config.js";
 

@@ -5,7 +5,6 @@ export const getClient=async(req,res)=>{
     try {
         const {id}= req.params;
         const client = await clientService.getClient(id);
-        if(!client) throw new Error("Client not found");
         res.json(client);
     } catch (error) {
         res.status(500).json({message: error.message});
@@ -39,15 +38,13 @@ export const updateClient=async(req,res)=>{
     try {
         const {id} = req.params;
         const {name, lastname, phone, photo, ci, nit, email}=req.body;
-        console.log(req.body)
-        console.log(id)
         const updatedData= await clientService.updateClient({id,name, lastname, phone, photo, ci, nit, email});
         if (updatedData === 0) {
-         return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
-
-    res.json("Updated Data");
+        res.json("Updated Data");
     } catch (error) {
+        console.log(error)
          return res.status(500).json({message: "Internal server error"});
     }
 }
