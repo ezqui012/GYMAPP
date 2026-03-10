@@ -1,12 +1,14 @@
 import express from "express";
 import morgan from "morgan";
 import usersRoutes from './routes/users.routes.js';
-import membershipTypeRoutes from './routes/membership_type.routes.js';
+//import membershipTypeRoutess from './routes/membership_type.routes.js';
+import membershipTypeRoutes from './modules/membership_type/membership_type.routes.js';
 import membershipRoutes from './routes/membership.routes.js';
 
 //import clientRoutess from './routes/client.routes.js';
 import clientRoutes from './modules/clients/client.routes.js';
-import employeeRoutes from './routes/employee.routes.js';
+import employeeRoutes from './modules/employees/employee.routes.js';
+//import employeeRoutess from './routes/employee.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import { PORT } from "./config/config.js";
 
