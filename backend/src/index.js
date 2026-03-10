@@ -1,7 +1,8 @@
 import express from "express";
 import morgan from "morgan";
 import usersRoutes from './routes/users.routes.js';
-import membershipTypeRoutes from './routes/membership_type.routes.js';
+//import membershipTypeRoutess from './routes/membership_type.routes.js';
+import membershipTypeRoutes from './modules/membership_type/membership_type.routes.js';
 import membershipRoutes from './routes/membership.routes.js';
 
 //import clientRoutess from './routes/client.routes.js';
