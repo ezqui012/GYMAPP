@@ -37,9 +37,7 @@ export const updateMembershipType=async(req, res)=>{
         const {id} = req.params;
         const {name, description, duration, price}=req.body;
         const membershipTypeUpdated= await membershipTypeService.updateMembershipType({id, name, description, duration, price});
-        if (membershipTypeUpdated === 0) {
-            return res.status(404).json({ message: "User not found" });
-        }
+        if (membershipTypeUpdated === 0) return res.status(404).json({ message: "User not found" });
 
         json({message: "Operation done sucessfully"});
 
