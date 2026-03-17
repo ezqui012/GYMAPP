@@ -16,18 +16,12 @@ let users=[
     },
 ]
 let verifyAccount=(user,password)=>{
-    let exist=false;
-    
     for (let i = 0; i < users.length; i++) {
         if(user===users[i].user && password===users[i].password){
-            exist=true;
-            
-            break;
-        }else{
-            console.error("rror")
+            return true; 
         }
     }
-    return exist;
+    return false;
     
 }
 
@@ -39,7 +33,12 @@ btnLog.addEventListener("click", (e)=>{
     let userPass=document.getElementById('pass').value
        
     if(verifyAccount(userData,userPass)){
-        window.location.href='clients/registClient.html';
+        console.log('redirigiendo....')
+        setTimeout(() => {
+
+            window.location.href='app/app.html';
+        }, 1000);
+        
     }else{
         alert("usuario invalido")
     }
