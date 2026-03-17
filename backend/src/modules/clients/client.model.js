@@ -5,6 +5,12 @@ export const getClients=async()=>{
     return clients.rows
 }
 
+export const activeClients=async()=>{
+    const clients = await pool.query(`SELECT p.name, p.lastname, p.ci, p.email, m.end_date from (person p inner join client c on p.id_person =c.id_client) 
+                                    inner join membership m on m.id_client=c.id_client where m.is_active =true `);
+    return clients.rows;
+}
+
 export const getClient= async(id)=>{
     const client  = await pool.query(`SELECT p.* FROM person p INNER JOIN client c ON c.id_client=p.id_person  WHERE c.id_client=$1`,[id]);
     return client.rows[0];

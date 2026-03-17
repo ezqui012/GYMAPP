@@ -3,6 +3,9 @@ import * as clientModel from './client.model.js'
 export const getAllClients=async()=>{
     return await clientModel.getClients();
 }
+export const getActiveClients=async()=>{
+    return await clientModel.activeClients();
+}
 
 export const getClient=async(id)=>{
     const client = await clientModel.getClient(id);
