@@ -8,6 +8,7 @@ import membershipRoutes from './modules/memberships/membership.routes.js';
 import clientRoutes from './modules/clients/client.routes.js';
 import employeeRoutes from './modules/employees/employee.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
+import cookieParser from "cookie-parser";
 
 const app=express();
 const ACCEPTED_ORIGINS=[
@@ -29,6 +30,7 @@ app.use(
 
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(morgan('dev'));
 app.use(usersRoutes);
 app.use(membershipTypeRoutes);
