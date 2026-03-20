@@ -1,3 +1,5 @@
+import { loadComponent } from "../app/app.js";
+
 export function sidebar() {
     const sidebar=document.createElement('DIV');
     sidebar.classList.add('sidebar_container'); 
@@ -23,6 +25,19 @@ export function sidebar() {
             </div>
             <button data-route="/report"class="btn"><b>Informes</b></button>
             <button data-route="/login"class="btn" onclick=""><b>Cerrar Sesión</b></button>`;
+
+
+    const navBtns= sidebar.querySelectorAll('[data-route]');
+    navBtns.forEach(btn=>{
+        btn.addEventListener('click',(e)=>{
+            e.preventDefault()
+            const route = btn.dataset.route;
+            if(route){
+                window.history.pushState({}, "", route);
+                loadComponent();
+            }
+        })
+    })
 
     const allBtnSections= sidebar.querySelectorAll('.btn_main');
 

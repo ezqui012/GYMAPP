@@ -64,6 +64,33 @@ a{
     color: #48e;
 }
 
+.container_btn{
+    margin-top: 10px;
+    align-self:flex-start;
+    width: 200px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+.btn {
+    color: #FF6F61;
+    background-color: #3C3C3C;
+    border-radius: 8px;
+    border: none;
+    padding: 10px;
+    width: 200px;
+    margin-bottom: 5px;
+}
+.btn:hover{
+    background-color: #2C2C2c;
+    color: #FF4F41;
+    
+}
+.add_button{
+    background-color: #2C2C5c;
+    color: #FF4F41;
+}
 
 /*APP HOME*/
 

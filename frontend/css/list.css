@@ -3,6 +3,9 @@ body{
     flex-direction: row;
     font-family: Arial, Helvetica, sans-serif;
 }
+#main_content{
+    width: 100%;
+}
 .frame_list_container{
     width: 100%;
     
