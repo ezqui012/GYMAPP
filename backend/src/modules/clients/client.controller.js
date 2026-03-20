@@ -11,6 +11,15 @@ export const getClient=async(req,res)=>{
     }
 }
 
+export const getActiveClients= async(req, res)=>{
+    try {
+        const activeClients= await clientService.getActiveClients();
+        res.json(activeClients);
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
 export const getClients=async(req, res)=>{
     try {
         const clients= await clientService.getAllClients();

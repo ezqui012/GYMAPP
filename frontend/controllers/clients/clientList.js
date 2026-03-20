@@ -1,5 +1,8 @@
 import { loadComponent } from "../../app/app.js";
-export function initClientList() {
+import {getActiveClients} from "../../services/client.services.js";
+
+
+export async function initClientList() {
   const btnAddclient = document.querySelector(".add_client");
   const containerBtn = document.querySelector(".btn_numbers");
   const searchBar = document.getElementById("searchbar");
@@ -9,11 +12,30 @@ export function initClientList() {
   let since = 0;
   let limit = 10;
   let activePage = 1;
-  let users = JSON.parse(localStorage.getItem("usersList"));
+  let users = await getActiveClients();
   let pageNumber = Math.ceil(users.length / limit);
 
-  let displayClients = () => {
-    let users = JSON.parse(localStorage.getItem("usersList"));
+  
+  
+  
+  const formatDate = (date) => {
+    let newDate=new Date(date);
+    let formatedDate = "";
+    let day = newDate.getDate();
+    let month = newDate.getMonth() + 1;
+    const year = newDate.getFullYear();
+    if (day < 10) {
+      day = "0" + day;
+    }
+    if (month < 10) {
+      month = "0" + month;
+    }
+    
+    return (formatedDate = `${day}/${month}/${year}`);
+  };
+
+  let displayClients = async() => {
+    const users = await getActiveClients();
     let tbodyContainer = document.querySelector(".tbody_container");
 
     tbodyContainer.innerHTML = "";
@@ -28,12 +50,12 @@ export function initClientList() {
 
       let tdLastName = document.createElement("td");
       tdLastName.classList.add("data-table");
-      tdLastName.textContent = users[i].lastName;
+      tdLastName.textContent = users[i].lastname;
       trContainer.appendChild(tdLastName);
 
       let tdExpireDate = document.createElement("td");
       tdExpireDate.classList.add("data-table");
-      tdExpireDate.textContent = "expira";
+      tdExpireDate.textContent =formatDate(users[i].end_date) ;
 
       trContainer.appendChild(tdExpireDate);
       let tdCi = document.createElement("td");
@@ -87,9 +109,9 @@ export function initClientList() {
 
   displayClients();
 
-  let deleteData = (id) => {
+  let deleteData = async(id) => {
     if (id !== null) {
-      let usersLocal = JSON.parse(localStorage.getItem("usersList")) || [];
+      let usersLocal = getActiveClients() || [];
       let users = usersLocal.filter((user) => user.id !== parseInt(id));
       localStorage.setItem("usersList", JSON.stringify(users));
       displayClients();

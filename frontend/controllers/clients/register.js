@@ -1,5 +1,6 @@
 import { Client } from "../../models/Client.js";
 import { loadComponent } from "../../app/app.js";
+import { createClient } from "../../services/client.services.js";
 export function initRegisterClient() {
   const btnSubmit = document.getElementById("submits");  
   const btnCancel = document.querySelector('.btn_cancel');
@@ -76,10 +77,12 @@ export function initRegisterClient() {
       let photo = document.getElementById("photo").value;
       let email = document.getElementById("email").value;
       let newClient = new Client(idClient, name, lastname, phone, ci, nit, photo, email);
-      let usersList= JSON.parse(localStorage.getItem("usersList")) || [];
-      usersList.push(newClient);
-      localStorage.setItem("usersList", JSON.stringify(usersList));
-
+      console.log(newClient)
+      // //let usersList= JSON.parse(localStorage.getItem("usersList")) || [];
+      // //usersList.push(newClient);
+      // localStorage.setItem("usersList", JSON.stringify(usersList));
+      
+      createClient(newClient);
       alertDialog.close();
       const toastNotification=showToast(checkForm);
       toastContainer.innerHTML=toastNotification;

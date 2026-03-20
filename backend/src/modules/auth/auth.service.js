@@ -1,18 +1,44 @@
-import * as authController from './auth.model.js';
-
-export const registUser= async({username, password, email, id_employee, id_role})=>{
-    Validation.username(username);
+import * as authModel from './auth.model.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { SECRET_JWT_KEY } from '../../config/config.js';
+export const registUser= async({name, password, email, id_employee, id_role})=>{
+    Validation.name(name);
     Validation.password(password);
-    const checkUser = await pool.query(`SELECT name FROM users WHERE name=$1`,[username]);
+    const checkUser = await pool.query(`SELECT name FROM users WHERE name=$1`,[name]);
     if(checkUser)throw new Error("Username already Exist");
 
-    return await authController.regist({username, password, email, id_employee, id_role});
+    return await authModel.regist({name, password, email, id_employee, id_role});
 }
 
+export const logUser= async({name, password, email})=>{
+    Validation.name(name);
+    Validation.password(password);
+
+    const userData= await authModel.findUser({name, email});
+
+    if(!userData)throw new Error("user does not exist");
+    const isValid= await bcrypt.compare(password, userData.password);
+    if(!isValid)throw new Error("invalid credentials");
+    
+    const token =jwt.sign(
+        { id: userData.id_user, username: userData.name,email: userData.email},
+        SECRET_JWT_KEY,
+        {
+            expiresIn: '1h'
+        }
+    );
+
+
+
+    return {userData, token};
+}
+
+
 class Validation{
-    static username (username){
-        if(typeof username!=='string')throw new Error("Username must be string");
-        if(username.length<3)throw new Error("username must contain al teas 3 characters long");
+    static name (name){
+        if(typeof name!=='string')throw new Error("Username must be string");
+        if(name.length<3)throw new Error("username must contain al teas 3 characters long");
     }
     static password (password){
          if(typeof password!=='string') throw new Error("password must be string");

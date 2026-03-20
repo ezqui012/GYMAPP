@@ -1,24 +1,10 @@
 import { sidebar } from "../components/sidebar.js";
 
-const sidebarComponent=sidebar();
-document.body.prepend(sidebarComponent);
-
-const btns=document.querySelectorAll('.btn');
-btns.forEach((sidebarBtn)=>{    
-  
-  sidebarBtn.addEventListener('click', (e)=>{
-      e.preventDefault();
-      let route = sidebarBtn.dataset.route;
-      if(route){
-        window.history.pushState({}, "", route);
-      loadComponent();  
-      }
-    })
-  })
-
 const routes = {
   404: "pages/404",
-  "/app": "/app/app.html",
+  "/app": "index.html",
+  "/login":"/../views/auth/login.html",
+  "/newUser": "../views/auth/registUser.html",
   "/registEmployee": "../views/employee/registEmployee.html",
   "/registClient": "../views/clients/registClient.html",
   "/employeeList": "../views/employee/employeeList.html",
@@ -39,8 +25,20 @@ const loadComponent = async () => {
   const path = window.location.pathname;
   const newRoute = routes[path] || routes["/app"] || routes["/404"];
   const html = await fetch(newRoute).then((data) => data.text());
-
+  
   document.getElementById("main_content").innerHTML = html;
+
+  const isAuthRoute = ["/login", "/newUser"].includes(path);
+  let sidebarEl = document.querySelector(".sidebar_container");
+
+   if (isAuthRoute) {
+        if (sidebarEl) sidebarEl.remove(); 
+    } else {
+        if (!sidebarEl) {
+            document.body.prepend(sidebar(loadComponent)); 
+        }
+    }
+  
   initView(path);
 };
 
@@ -54,17 +52,18 @@ window.addEventListener("popstate", () => {
 });
 loadComponent();
 
-//render a component
-let renderComponent = (componentContainer, newComponent) => {
-  if (componentContainer) {
-    componentContainer.innerHTML = newComponent;
-  }
-};
+
 
 
 
 function initView(path) {
   switch (path) {
+    case "/login":
+      import("/controllers/auth/login.js").then((mod) => mod.initLogin()).catch((err)=>console.log(err));
+      break;
+    case "/newUser":
+      import("/controllers/auth/registUser.js").then((mod) => mod.initRegistUser()).catch((err)=>console.log(err));
+      break;
     case "/clientList":
       import("/controllers/clients/clientList.js").then((mod) => mod.initClientList()).catch((err)=>console.log(err));
       break;
