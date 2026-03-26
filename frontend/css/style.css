@@ -1,5 +1,12 @@
+@import url("form.css");
+@import url("sidebar.css");
+@import url("list.css");
+
 body{
     margin: 0;
+    display: flex;
+    flex-direction: row;
+    font-family: Arial, Helvetica, sans-serif;
     background-color: #333339;
 }
 .feature_container{
@@ -31,11 +38,11 @@ h3{
     display: flex;
     flex-direction: column;
     row-gap: 5px;
-    height: 150px;
+    
     width: 250px;
     
 }
-input{
+.input{
     padding: 12px;
     border: none;
     border-radius: 8px;
@@ -73,7 +80,7 @@ a{
     justify-content: center;
     align-content: center;
 }
-.btn {
+/* .btn {
     color: #FF6F61;
     background-color: #3C3C3C;
     border-radius: 8px;
@@ -81,8 +88,8 @@ a{
     padding: 10px;
     width: 200px;
     margin-bottom: 5px;
-}
-.btn:hover{
+} */
+/* .btn:hover{
     background-color: #2C2C2c;
     color: #FF4F41;
     
@@ -90,7 +97,7 @@ a{
 .add_button{
     background-color: #2C2C5c;
     color: #FF4F41;
-}
+} */
 
 /*APP HOME*/
 
