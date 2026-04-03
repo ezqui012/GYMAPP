@@ -205,3 +205,44 @@ p.error.show{
 }
 
 
+
+/*Auth form login and regist user*/
+
+.field_user{
+    width: 200px;
+    padding: 8px;
+}
+
+.field_role{
+    width: 220px;
+    height: 40px;
+    padding: 8px;
+}
+.btn_add_user, .btn_init_log{
+    background-color: #2C2C5c;
+    color: #FF4F41;
+    border-radius: 8px;
+    border: none;
+    padding: 10px;
+    width: 200px;
+    margin-bottom: 5px;
+}
+.btn_add_user:hover, .btn_init_log:hover{
+    background-color: #2C2C2c;
+    color: #FF4F41;
+    
+}
+/* .btn {
+    
+} */
+/* .btn:hover{
+    background-color: #2C2C2c;
+    color: #FF4F41;
+    
+}
+.add_button{
+    background-color: #2C2C5c;
+    color: #FF4F41;
+} */
+
+
