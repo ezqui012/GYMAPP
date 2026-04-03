@@ -48,3 +48,8 @@ export const findEmployeeByEmail=async(email)=>{
     const rows= await pool.query('SELECT * from person p INNER JOIN employee e on e.id_employee=p.id_person WHERE p.email=$1', [email]);
     return rows;
 }
+
+export const findEmployeeById=async(id)=>{
+    const employee= await pool.query('SELECT e.id_employee from employee e WHERE e.id_employee=$1', [id])
+    return employee.rows[0];
+}
