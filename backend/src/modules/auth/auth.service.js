@@ -2,14 +2,6 @@ import * as authModel from './auth.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { SECRET_JWT_KEY } from '../../config/config.js';
-export const registUser= async({name, password, email, id_employee, id_role})=>{
-    Validation.name(name);
-    Validation.password(password);
-    const checkUser = await pool.query(`SELECT name FROM users WHERE name=$1`,[name]);
-    if(checkUser)throw new Error("Username already Exist");
-
-    return await authModel.regist({name, password, email, id_employee, id_role});
-}
 
 export const logUser= async({name, password, email})=>{
     Validation.name(name);

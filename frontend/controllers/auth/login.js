@@ -20,7 +20,7 @@ export async function initLogin(){
     },
 ]
 let btnLog=document.querySelector('.submit_button');
-const btnAdd=document.querySelector('.add_button');
+const btnAdd=document.querySelector('.btn_add_user');
 let verifyAccount=(user,password)=>{
     for (let i = 0; i < users.length; i++) {
         if(user===users[i].user && password===users[i].password){

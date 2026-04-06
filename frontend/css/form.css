@@ -1,43 +1,39 @@
-body{
-    margin: 0;
-    display: flex;
-    flex-direction: row;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #333339;
-}
 .form{
+    margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left: 100px;
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
 }
 .form h2{
     color: #fff;
 }
 .input_data_container{
     display: grid;
-    width: 550px;
-    height: 350px;
+    width: 800px;
+    height: 450px;
     align-items: center;
-    grid-template-columns: repeat(2,200px);
-    column-gap: 100px;
-    grid-template-rows: repeat(5,90px);
+    justify-content: center;
+    grid-template-columns: repeat(2,380px);
+    grid-template-rows: repeat(4,90px);
 }
 .input_container{
-    min-width: 250px;
+    justify-self: center;
+    min-width: 350px;
     display: flex;
     flex-direction: column;
-    
+    align-items: center;
 }
 .field_name{
+    align-self: flex-start;
     color: #FF2C2C;
     margin-bottom: 3px;
 }
 .field_data{
-    width: 240px;
+    width: 100%;
     height: 30px;
+    padding: 8px;
     border: none;
     border-radius: 8px;
 }
@@ -178,19 +174,20 @@ p.error.show{
     
 }
 
-/*Membership*/
+/*Membership VIEW*/
 .input_data_container_membership{
     display: flex;
+    align-items: center;
+    justify-content: center ;
     flex-direction: column;
     row-gap: 15px;
 }
-#client{
-    width: 450px;
-    height: 30px;
-}
-.data_container{
+.input_container_membership{
+    justify-self: center;
+    min-width: 450px;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 .membership_data{
     color: #fff;
@@ -201,3 +198,40 @@ p.error.show{
     color: #E53935;
     margin-right: 10px;
 }
+
+#dateClientEntry{
+    width: 96%;
+    
+}
+
+
+
+/*Auth form login and regist user*/
+
+.field_user{
+    width: 200px;
+    padding: 8px;
+}
+
+.f_email, .f_role{
+    width: 220px;
+    height: 40px;
+    padding: 8px;
+}
+.btn_add_user, .btn_init_log{
+    background-color: #2C2C5c;
+    color: #FF4F41;
+    border-radius: 8px;
+    border: none;
+    padding: 10px;
+    width: 200px;
+    margin-bottom: 5px;
+}
+.btn_add_user:hover, .btn_init_log:hover{
+    background-color: #2C2C2c;
+    color: #FF4F41;
+    
+}
+
+
+

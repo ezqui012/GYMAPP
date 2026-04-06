@@ -20,10 +20,19 @@ export const getEmployee=async(req, res)=>{
     }
 }
 
+export const getEmployeeEmailsWhioutUser=async(req, res)=>{
+    try {
+        const users = await employeeService.employeEmailWhitoutUser();
+        res.status(200).json(users)
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+}
+
 export const createEmployee=async(req,res)=>{
     try {
         const {name, lastname, phone, photo, ci, nit, email}=req.body;
-        const newClient= await employeeService.createEmployee({name, lastname, phone, photo, ci, nit, email});
+        await employeeService.createEmployee({name, lastname, phone, photo, ci, nit, email});
         res.status(201).json("Data was inserted succesfully");
     } catch (error) {
         const status=error.message==='Email is already used' ? 400:500;
