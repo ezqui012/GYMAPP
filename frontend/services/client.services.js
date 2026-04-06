@@ -9,7 +9,7 @@ export const getAllClients=async()=>{
         credentials: 'include'
         });
 
-        if(!response.ok)throw new Error(`Error Http> ${response.status}`);
+        if(!response.ok)throw new Error(`Error Http ${response.status}`);
         
 
         const data = await response.json();

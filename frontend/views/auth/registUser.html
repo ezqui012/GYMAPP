@@ -7,22 +7,37 @@
             <h3>Registrar Usuario</h3>
             <div class="input_container">
               <label class="label_user">Rol</label>
-              <select class="field_role" id="role">
-                <option value="0" class="role_option">Administrador</option>
-                <option value="1" class="role_option">Empleado</option>
+              <select class="field_user f_role" id="role">
+                <option value="role0" class="role_option">Elegir Rol</option>
+                <option value="0"  class="role_option">Administrador</option>
+                <option value="1"  class="role_option">Empleado</option>
               </select>
+              <p class="error" id="role_error"></p>  
             </div>
             <div class="input_container">
-              <label  class="label_user">Email</label>
-              <select class="field_role" id="email">
-                <option value="" class="email">ejempli@gmail.com</option>
+              <label for="email" class="label_user">Email</label>
+              <select name="selected_email" class="field_user f_email" id="email" >
+                <option value="email0" disabled selected>Elegir Correo</option> 
               </select>
             </div>
+            <p class="error" id="email_error"></p>  
             <div class="input_container">
               <label class="label_user">Contraseña</label>
-              <input placeholder="************" type="password" id="pass" class="field_user"/>
+              <input placeholder="************" type="password" id="password" class="field_user"/>
             </div>
-            <button class="btn submit_button">Iniciar Sesión</button>
-            <a href="">Iniciar Sesión</a>
+            <p class="error" id="password_error"></p>  
+            <!--Button group-->
+            <div class="dialog-container">
+              <dialog id="alert-dialog">
+              <h3>Confirmar Registro</h3>
+              <div class="button_container_modal">
+                <button id="close_modal" class="btn_submit_modal cancel">Cerrar</button>
+                <button id="modal_submit" class="btn_submit_modal confirm">Confirmar</button>
+              </div>
+            </dialog>
+            </div>
+            <div class="toast_container"></div>
+            <button class="btn submit_button">Registrar Usuario</button>
+            <a href="" >Iniciar Sesión</a>
           </form>
     </div>

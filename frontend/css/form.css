@@ -213,7 +213,7 @@ p.error.show{
     padding: 8px;
 }
 
-.field_role{
+.f_email, .f_role{
     width: 220px;
     height: 40px;
     padding: 8px;
@@ -232,17 +232,6 @@ p.error.show{
     color: #FF4F41;
     
 }
-/* .btn {
-    
-} */
-/* .btn:hover{
-    background-color: #2C2C2c;
-    color: #FF4F41;
-    
-}
-.add_button{
-    background-color: #2C2C5c;
-    color: #FF4F41;
-} */
+
 
 
