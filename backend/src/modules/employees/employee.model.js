@@ -12,6 +12,19 @@ export const getAnEmployee=async(id)=>{
     return employee.rows[0];
 }
 
+export const getEmailEmployeeWhitoutUser=async()=>{
+    const emailEmployeeWhitoutUser=await pool.query(
+        `SELECT e.id_employee, p.email 
+        from person p inner join employee e on p.id_person=e.id_employee 
+        left join users u on u.id_user=e.id_employee WHERE u.id_user is null`);
+
+    return emailEmployeeWhitoutUser.rows;
+}
+
+
+
+
+
 export const createEmployee=async({name, lastname, phone,photo, ci, nit, email})=>{
     const employeeData = await pool.query(`INSERT INTO person (name, lastname, phone, photo, ci, nit, email) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_person`,
           [

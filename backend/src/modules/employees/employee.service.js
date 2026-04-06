@@ -11,6 +11,12 @@ export const getEmployee=async(id)=>{
     return employee;
 }
 
+export const employeEmailWhitoutUser=async()=>{
+    const users= await employeeModel.getEmailEmployeeWhitoutUser();
+    if(!users)throw new Error("Error fetching data");
+    
+    return users;
+}
 export const createEmployee=async({name, lastname , phone, photo , ci, nit, email})=>{
     const verifyEmployee= await employeeModel.findEmployeeByEmail(email);
     if(!verifyEmployee) throw new Error("Email is already in use");
