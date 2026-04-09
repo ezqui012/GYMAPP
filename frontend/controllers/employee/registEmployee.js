@@ -1,5 +1,6 @@
 import { Employee } from "../../models/Employee.js";
 import { loadComponent } from "../../app/app.js";
+import { registEmployee } from "../../services/employee.services.js";
 export function initRegisterEmployee() {
   const allInput = document.querySelectorAll(".field_data");
   const btnSbumit = document.querySelector(".btn_submit");
@@ -28,21 +29,20 @@ export function initRegisterEmployee() {
   const removeToast=()=>{
     toastContainer.removeChild(toastContainer.firstChild);
   }
-  const submitEmployee = () => {
+  const submitEmployee = async() => {
     const alertDialog = document.getElementById("alert-dialog");
     let checkForm = alertDialog.dataset.checkForm;
     if (checkForm) {
-      let idEmployee = Date.now();
       let name = document.getElementById("name").value;
       let lastName = document.getElementById("lastName").value;
       let phone = document.getElementById("phone").value;
       let ci = document.getElementById("ci").value;
       let photo = "foto";
       let schedule = document.getElementById("schedule").value;
-      let role = document.getElementById("role").value;
+      let job_role = document.getElementById("role").value;
+      
       let email = document.getElementById("email").value;
       let newEmployee = new Employee(
-        idEmployee,
         name,
         lastName,
         email,
@@ -50,23 +50,29 @@ export function initRegisterEmployee() {
         ci,
         photo,
         schedule,
-        role
+        job_role
       );
-      let employeesList =
-        JSON.parse(localStorage.getItem("employeeList")) || [];
-      employeesList.push(newEmployee);
-      localStorage.setItem("employeeList", JSON.stringify(employeesList));
-      console.log("se registro usuario con exito");
-      alertDialog.close();
-      const toastNotification = showToast(checkForm);
-      toastContainer.innerHTML = toastNotification;
-      setTimeout(() => {
-        removeToast();
-      }, 3000);
+     
+      const createdEmployee=await registEmployee(newEmployee);
+      console.log(createdEmployee)
+      if(createdEmployee){
+        console.log("se registro usuario con exito");
+        alertDialog.close();
+        
+        const toastNotification = showToast(checkForm);
+        toastContainer.innerHTML = toastNotification;
+        setTimeout(() => {
+          removeToast();
+        }, 3000);
+      }else{
+        const toastNotification = showToast(false);
+        toastContainer.innerHTML = toastNotification;
+      }
+
+      
     } else {
-      const toastNotification = showToast(checkForm);
+      const toastNotification = showToast(false);
       toastContainer.innerHTML = toastNotification;
-      console.log(showToast(checkForm));
     }
     toastContainer.addEventListener("click", () => removeToast());
   };

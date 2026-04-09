@@ -1,17 +1,17 @@
 import { loadComponent } from "../../app/app.js";
-
-export function initEmployeeList() {
+import { getDataEmployees } from "../../services/employee.services.js";
+export async function initEmployeeList() {
   const btnAddEmp = document.querySelector(".add_employee");
   const searchBar = document.getElementById("searchbar");
   const containerBtn=document.querySelector('.btn_numbers');
   const btnForward=document.querySelector('.forward_btn');
   const btnBack=document.querySelector('.back_btn');
-
+  console.log(await getDataEmployees())
   let since = 0;
   let limit = 10;
   let activePage = 1;
-  let users = JSON.parse(localStorage.getItem("employeeList"));
-  let pageNumber = Math.ceil(users.length / limit);
+  let employees = await getDataEmployees();
+  let pageNumber = Math.ceil(employees.length / limit);
 
   let editButton = () => {
     const editButton = document.querySelectorAll(".edit_data");
@@ -37,8 +37,8 @@ export function initEmployeeList() {
 
   let deleteData = (id) => {
     if (id !== null) {
-      let usersLocal = JSON.parse(localStorage.getItem("employeeList")) || [];
-      let users = usersLocal.filter((user) => user.id !== parseInt(id));
+      let employees = getDataEmployees() ;
+      let users = employees.filter((user) => user.id !== parseInt(id));
       localStorage.setItem("employeeList", JSON.stringify(users));
       loadListEmployee();
     } else {
@@ -53,7 +53,6 @@ export function initEmployeeList() {
     return buttons;
   };
   function loadListEmployee() {
-    let employees = JSON.parse(localStorage.getItem("employeeList"));
     const tbodyContainer = document.querySelector(".tbody_container");
     tbodyContainer.innerHTML = "";
 
@@ -83,7 +82,7 @@ export function initEmployeeList() {
 
       const tdType = document.createElement("td");
       tdType.classList.add("data-table");
-      tdType.innerHTML = employees[i].role;
+      tdType.innerHTML = employees[i].job_role;
       trContainer.appendChild(tdType);
 
       const tdCi = document.createElement("td");
