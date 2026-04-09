@@ -17,11 +17,20 @@ export const employeEmailWhitoutUser=async()=>{
     
     return users;
 }
-export const createEmployee=async({name, lastname , phone, photo , ci, nit, email})=>{
+export const createEmployee=async({name, lastname , phone, photo , ci, email, schedule, job_role})=>{
     const verifyEmployee= await employeeModel.findEmployeeByEmail(email);
-    if(!verifyEmployee) throw new Error("Email is already in use");
+    if(!verifyEmployee){
+        const error = new Error("Email is already in use");
+        error.status=400;
+        throw error;
+    }
 
-    const employeeData= await employeeModel.createEmployee({name, lastname, phone, photo, ci, nit, email});
+    const employeeData= await employeeModel.createEmployee({name, lastname, phone, photo, ci, email, schedule, job_role});
+    if(!employeeData){
+        const error = new Error('Error creating employee');
+        error.status=500;
+        throw error;
+    }
 
     return employeeData;
 }

@@ -1,7 +1,7 @@
 import { pool } from "../../config/db.js";
 
 export const getAllEmployees=async()=>{
-    const employees= await pool.query(`SELECT p.* FROM person p INNER JOIN employee e ON p.id_person=e.id_employee`);
+    const employees= await pool.query(`SELECT p.name, p.lastname, p.email, p.ci, e.schedule, e.job_role FROM person p INNER JOIN employee e ON p.id_person=e.id_employee`);
 
     return employees.rows;
 }
@@ -25,21 +25,42 @@ export const getEmailEmployeeWhitoutUser=async()=>{
 
 
 
-export const createEmployee=async({name, lastname, phone,photo, ci, nit, email})=>{
-    const employeeData = await pool.query(`INSERT INTO person (name, lastname, phone, photo, ci, nit, email) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_person`,
+export const createEmployee=async({name, lastname, phone,photo, ci, email, schedule, job_role})=>{
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        const employeeData = await client.query(`INSERT INTO person (name, lastname, phone, photo, ci, nit, email) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_person`,
           [
             name,
             lastname,
             phone,
             photo,
             ci,
-            nit,
+            "0000",
             email,
           ]
         );
-    const employeeId = employeeData.rows[0].id_person;
-    await pool.query(`INSERT INTO employee (id_employee) VALUES ($1)`, [employeeId]);
-    return employeeData.rows[0];
+        const employeeId = employeeData.rows[0].id_person;
+    
+        const employeeInserted=await client.query(`INSERT INTO employee (id_employee, job_role, schedule) VALUES ($1,$2,$3) RETURNING *`, [
+            employeeId,
+            job_role,
+            schedule
+        ]);
+
+        const dataEmployee= employeeInserted.rows[0];
+        await client.query('COMMIT');
+        console.log('Sucessfull Transaction');
+        return  dataEmployee;
+        
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Transaction error, reversion done', error);
+    } finally{
+        client.release();
+    }
+    
 }
 
 export const updateEmployee=async({id, name, lastname, phone, photo, ci, nit, email})=>{
