@@ -1,17 +1,17 @@
 import { loadComponent } from "../../app/app.js";
-import { getDataEmployees } from "../../services/employee.services.js";
+import { getDataEmployees, deleteEmployee } from "../../services/employee.services.js";
 export async function initEmployeeList() {
   const btnAddEmp = document.querySelector(".add_employee");
   const searchBar = document.getElementById("searchbar");
   const containerBtn=document.querySelector('.btn_numbers');
   const btnForward=document.querySelector('.forward_btn');
   const btnBack=document.querySelector('.back_btn');
-  console.log(await getDataEmployees())
   let since = 0;
   let limit = 10;
   let activePage = 1;
-  let employees = await getDataEmployees();
-  let pageNumber = Math.ceil(employees.length / limit);
+  let employees=[];
+  let employeesPagination = await getDataEmployees();
+  let pageNumber = Math.ceil(employeesPagination.length / limit);
 
   let editButton = () => {
     const editButton = document.querySelectorAll(".edit_data");
@@ -27,24 +27,20 @@ export async function initEmployeeList() {
 
   let deleteAction = () => {
     const deleteClient = document.querySelectorAll(".delete_data");
+    
     deleteClient.forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        let id = e.currentTarget.dataset.index;
-        deleteData(id);
+        let id = parseInt(e.currentTarget.dataset.index);
+        handleDelete(id);
       });
-    });
-  };
 
-  let deleteData = (id) => {
-    if (id !== null) {
-      let employees = getDataEmployees() ;
-      let users = employees.filter((user) => user.id !== parseInt(id));
-      localStorage.setItem("employeeList", JSON.stringify(users));
-      loadListEmployee();
-    } else {
-      console.log("error con la posicion del elemento" + pos);
-    }
-  };
+    });
+  }
+
+  const handleDelete=async(id)=>{
+    await deleteEmployee(id);
+    await loadListEmployee();
+  }
 
   let displayButtonOption = (id) => {
     let buttons = `<button class='btn_action view_data' data-index='${id}'><i class="fas fa-eye ver-btn" title="Ver"></i></button>
@@ -52,7 +48,8 @@ export async function initEmployeeList() {
                  <button class='btn_action delete_data' data-index='${id}' ><i class="fas fa-trash borrar-btn" title="Borrar"></i></button>`;
     return buttons;
   };
-  function loadListEmployee() {
+  async function loadListEmployee() {
+    employees= await getDataEmployees();
     const tbodyContainer = document.querySelector(".tbody_container");
     tbodyContainer.innerHTML = "";
 
@@ -92,7 +89,7 @@ export async function initEmployeeList() {
 
       let tdButtons = document.createElement("td");
       tdButtons.classList.add("actions");
-      tdButtons.innerHTML = displayButtonOption(employees[i].id);
+      tdButtons.innerHTML = displayButtonOption(employees[i].id_employee);
       trContainer.appendChild(tdButtons);
       tbodyContainer.appendChild(trContainer);
     }
