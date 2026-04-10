@@ -1,13 +1,13 @@
 import { pool } from "../../config/db.js";
 
 export const getAllEmployees=async()=>{
-    const employees= await pool.query(`SELECT p.name, p.lastname, p.email, p.ci, e.schedule, e.job_role FROM person p INNER JOIN employee e ON p.id_person=e.id_employee`);
+    const employees= await pool.query(`SELECT e.id_employee, p.name, p.lastname, p.email, p.ci, e.schedule, e.job_role FROM person p INNER JOIN employee e ON p.id_person=e.id_employee`);
 
     return employees.rows;
 }
 
 export const getAnEmployee=async(id)=>{
-    const employee= await pool.query('SELECT p.* FROM person p INNER JOIN employee e ON p.id_person=e.id_employee WHERE e.id_employee=$1', [id]);
+    const employee= await pool.query('SELECT e.id_employee, p.name, p.lastname, p.email, p.phone, p.ci, p.photo, e.schedule, e.job_role FROM person p INNER JOIN employee e ON p.id_person=e.id_employee WHERE e.id_employee=$1', [id]);
 
     return employee.rows[0];
 }
@@ -63,12 +63,25 @@ export const createEmployee=async({name, lastname, phone,photo, ci, email, sched
     
 }
 
-export const updateEmployee=async({id, name, lastname, phone, photo, ci, nit, email})=>{
-        const { rowCount } = await pool.query(`UPDATE person SET name='${name}', lastname='${lastname}',
+export const updateEmployee=async({id, name, lastname, phone, photo, ci, nit, email, job_role, schedule})=>{
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        const { rowCount } = await client.query(`UPDATE person SET name='${name}', lastname='${lastname}',
         phone='${phone}', photo='${photo}', ci='${ci}', nit='${nit}', email='${email}' 
         WHERE id_person=${id}`);
-           
-    return rowCount;  
+
+        await client.query(`UPDATE employee SET job_role='${job_role}', schedule='${schedule}' WHERE id_employee=${id}`);
+        await client.query('COMMIT');
+        return rowCount;
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.log('Transaction error, reversion done', error);
+    }finally{
+        client.release();
+    }
+          
 }
 
 
@@ -84,6 +97,6 @@ export const findEmployeeByEmail=async(email)=>{
 }
 
 export const findEmployeeById=async(id)=>{
-    const employee= await pool.query('SELECT e.id_employee from employee e WHERE e.id_employee=$1', [id])
+    const employee= await pool.query('SELECT e.id_employee from employee e WHERE e.id_employee=$1 RETURNING *', [id])
     return employee.rows[0];
 }

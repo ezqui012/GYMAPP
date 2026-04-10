@@ -35,14 +35,21 @@ export const createEmployee=async({name, lastname , phone, photo , ci, email, sc
     return employeeData;
 }
 
-export const updateEmployee=async({id, name, lastname , phone, photo , ci, nit, email })=>{
+export const updateEmployee=async({id, name, lastname , phone, photo , ci, nit, email, schedule, job_role })=>{
     
-    const employeeUpdated= await employeeModel.updateEmployee({id,name,lastname,phone,photo,ci,nit,email});
+    const employeeUpdated= await employeeModel.updateEmployee({id, name, lastname, phone, photo, ci, nit, email, schedule, job_role});
     if(!employeeUpdated) throw new Error("Error updating data");
 
     return employeeUpdated;
 }
 
 export const deleteEmployee=async(id)=>{
-    return await employeeModel.deleteEmployee(id);
+    const deletedEmployee= await employeeModel.deleteEmployee(id);
+    if(!deletedEmployee){
+        const error = new Error('Error deleting employee');
+        error.status=500;
+        throw error;
+    };
+    
+    return deleteEmployee;
 }
