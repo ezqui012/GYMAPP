@@ -20,8 +20,31 @@ export const getAllClients=async()=>{
     
 }
 
+export const getInactiveClients =async()=>{
+        try {
+            const response = await fetch(`${API_URL}/inactiveClients`, {
+                credentials: "include"
+            })
+            const data = await response.json();
+            return data
+        } catch (error) {
+            console.log("Error fetching data", error);
+        }
+}
 
-export const getActiveClients=async()=>{
+export const getDeletedClients=async()=>{
+    try {
+        const response = await fetch(`${API_URL}/getSoftDeletedClients`, {
+            credentials: "include"
+        });
+        const data = await response.json()
+        return data;
+    } catch (error) {
+        console.log("Error fetching data", error);
+    }
+}
+
+export const getActiveClientsByActiveMembership=async()=>{
     try {
         const response= await fetch(`${API_URL}/activeClients`, {
             credentials: 'include'
@@ -51,5 +74,21 @@ export const createClient=async(client)=>{
         
     } catch (error) {
         console.error("error en la peticion", error);
+    }
+}
+
+export const softDeleteClient=async(id)=>{
+    try {
+        const response = await fetch(`${API_URL}/softDeleteClient/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: "include"
+        })
+        console.log(response)
+        if(!response.ok)throw new Error("Action error");
+    } catch (error) {
+        console.error("error en la petición", error);
     }
 }

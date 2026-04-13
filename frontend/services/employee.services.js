@@ -78,7 +78,7 @@ export const updateEmployee=async(id, employeeData)=>{
             credentials: "include"
         })
 
-        if(!response)throw new Error("error updating data");
+        if(!response.ok)throw new Error("error updating data");
 
         const data= response.json();
         return data;
