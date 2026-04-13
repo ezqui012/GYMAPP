@@ -14,7 +14,7 @@ export const getEmployee=async(req, res)=>{
     try {
         const {id}=req.params;
         const rows = await employeeService.getEmployee(id);
-        res.json(rows)
+        res.status(200).json(rows)
     } catch (error) {
         res.status(500).json({message: error.message});
     }
@@ -31,11 +31,12 @@ export const getEmployeeEmailsWhioutUser=async(req, res)=>{
 
 export const createEmployee=async(req,res)=>{
     try {
-        const {name, lastname, phone, photo, ci, nit, email}=req.body;
-        await employeeService.createEmployee({name, lastname, phone, photo, ci, nit, email});
-        res.status(201).json("Data was inserted succesfully");
+        const {name, lastname, phone, photo, ci, email, schedule, job_role}=req.body;
+        const employee= await employeeService.createEmployee({name, lastname, phone, photo, ci, email, schedule, job_role});
+
+        res.status(201).json({message: 'Data was inserted succesfully:', data:employee})
     } catch (error) {
-        const status=error.message==='Email is already used' ? 400:500;
+        const status=error==='Email is already used' ? 400:500;
         res.status(status).json({message: error.message})
     }
 }
@@ -44,9 +45,9 @@ export const updateEmployee=async(req,res)=>{
     try {
         const {id}=req.params;
        // console.log(id)
-        const {name, lastname, phone, photo, ci, nit, email} = req.body;
+        const {name, lastname, phone, photo, ci, nit, email, schedule, job_role} = req.body;
        // console.log(name)
-        const updatedData =await employeeService.updateEmployee({id, name, lastname, phone, photo, ci, nit, email});
+        const updatedData =await employeeService.updateEmployee({id, name, lastname, phone, photo, ci, nit, email, schedule, job_role});
         
         if (updatedData === 0) {
             return res.status(404).json({ message: "User not found" });
@@ -64,6 +65,7 @@ export const deleteEmployee=async(req,res)=>{
     try {
         const {id} = req.params;
         const deleted= await employeeService.deleteEmployee(id)
+        console.log(deleted)
         if(deleted===0) return res.status(404).json({ message: "User not found" });
         
         res.status(202).json("Request was done sucessfully")

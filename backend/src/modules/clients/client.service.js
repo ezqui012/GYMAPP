@@ -7,6 +7,14 @@ export const getActiveClients=async()=>{
     return await clientModel.activeClients();
 }
 
+export const getInactiveClients = async()=>{
+    return await clientModel.inactiveClients();
+}
+
+export const getSoftDeletedClients = async()=>{
+    return await clientModel.softDeletedClients();
+}
+
 export const getClient=async(id)=>{
     const client = await clientModel.getClient(id);
     if(!client) throw new Error("Client not found ");
@@ -30,6 +38,12 @@ export const updateClient=async({id, name, lastname, phone, photo,ci,nit, email}
     return clientUpdated;
 }
 
-export const deleteClient=async(id)=>{
-    return await clientModel.deleteClient(id);
+export const softDeleteClient=async(id)=>{
+    const isDeleted=await clientModel.softDeleteClient(id);
+    if(!isDeleted){
+        const error = new Error('client does not exist');
+        error.status = 404
+        throw error
+    }
+    return isDeleted;
 }

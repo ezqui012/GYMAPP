@@ -20,6 +20,24 @@ export const getActiveClients= async(req, res)=>{
     }
 }
 
+export const getInactiveClients = async(req,res)=>{
+    try {
+        const inactiveClients = await clientService.getInactiveClients();
+        res.json(inactiveClients)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
+export const getSoftDeletedClients = async(req, res)=>{
+    try {
+        const deletedClients = await clientService.getSoftDeletedClients();
+        res.json(deletedClients)
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+}
+
 export const getClients=async(req, res)=>{
     try {
         const clients= await clientService.getAllClients();
@@ -59,14 +77,11 @@ export const updateClient=async(req,res)=>{
 }
 
 
-export const deleteClient=async(req,res)=>{
+export const softDeleteClient=async(req,res)=>{
     try {
         const {id}=req.params;
-        const clienteIsDelete=await clientService.deleteClient(id);
-        if (clienteIsDelete === 0) {
-            return res.status(404).json({ message: "User not found" });
-        }
-    return res.sendStatus(204);
+        await clientService.softDeleteClient(id);
+        return res.sendStatus(204);
     } catch (error) {
         return res.status(500).json({message: "Internal server error"});
     }

@@ -1,5 +1,5 @@
 import { loadComponent } from "../../app/app.js";
-import {getActiveClients} from "../../services/client.services.js";
+import {getActiveClientsByActiveMembership, softDeleteClient, getInactiveClients} from "../../services/client.services.js";
 
 
 export async function initClientList() {
@@ -12,10 +12,10 @@ export async function initClientList() {
   let since = 0;
   let limit = 10;
   let activePage = 1;
-  let users = await getActiveClients();
+  let users = await getActiveClientsByActiveMembership();
   let pageNumber = Math.ceil(users.length / limit);
 
-  
+  console.log(await getInactiveClients())
   
   
   const formatDate = (date) => {
@@ -35,7 +35,7 @@ export async function initClientList() {
   };
 
   let displayClients = async() => {
-    const users = await getActiveClients();
+    const users = await getActiveClientsByActiveMembership();
     let tbodyContainer = document.querySelector(".tbody_container");
 
     tbodyContainer.innerHTML = "";
@@ -70,7 +70,7 @@ export async function initClientList() {
 
       let tdAction = document.createElement("td");
       tdAction.classList.add("actions");
-      tdAction.innerHTML = displayButtonOption(users[i].id);
+      tdAction.innerHTML = displayButtonOption(users[i].id_client);
       trContainer.appendChild(tdAction);
       tbodyContainer.appendChild(trContainer);
     }
@@ -94,7 +94,7 @@ export async function initClientList() {
     const deleteClient = document.querySelectorAll(".delete_data");
     deleteClient.forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        let id = e.currentTarget.dataset.index;
+        let id = parseInt(e.currentTarget.dataset.index);
         deleteData(id);
       });
     });
@@ -110,10 +110,9 @@ export async function initClientList() {
   displayClients();
 
   let deleteData = async(id) => {
+    console.log(id)
     if (id !== null) {
-      let usersLocal = getActiveClients() || [];
-      let users = usersLocal.filter((user) => user.id !== parseInt(id));
-      localStorage.setItem("usersList", JSON.stringify(users));
+      await softDeleteClient(id)
       displayClients();
     } else {
       console.log("error con la posicion del elemento" + pos);

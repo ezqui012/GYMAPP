@@ -1,5 +1,7 @@
 import { loadComponent } from "../../app/app.js";
-export function initEditEmployee() {
+import { getAEmployee, updateEmployee } from "../../services/employee.services.js";
+import { Employee } from "../../models/Employee.js";
+export async function initEditEmployee() {
   const btnSubmit = document.querySelector(".btn_submit");
   const btnCancelSubmit = document.querySelector('.btn_cancel');
   const allInput = document.querySelectorAll('.field_data');
@@ -8,17 +10,9 @@ export function initEditEmployee() {
   const toastContainer=document.querySelector('.toast_container');
   const urlParams = new URLSearchParams(window.location.search);
   const empId = parseInt(urlParams.get("id"));
-  const getDataEmployee = () => {
-    let employee = {};
-    const dataEmployee = JSON.parse(localStorage.getItem("employeeList"));
-    for (let i = 0; i < dataEmployee.length; i++) {
-      if (dataEmployee[i].id === empId) {
-        employee = dataEmployee[i];
-        break;
-      }
-    }
-    return employee;
-  };
+  console.log(empId)
+  const fetechedDataEmployee=await getAEmployee(empId);
+  console.log(fetechedDataEmployee)
   
   const showToast = (checkform) => {
     let message = "";
@@ -39,8 +33,8 @@ export function initEditEmployee() {
     toastContainer.innerHTML="";
     
   };
-  const loadEmployeeData = () => {
-    const empData = getDataEmployee();
+  const loadEmployeeData =  () => {
+    const empData =  fetechedDataEmployee;
     if (empData) {
       const name = document.getElementById("name");
       name.value = empData.name;
@@ -57,43 +51,47 @@ export function initEditEmployee() {
       const schedule = document.getElementById("schedule");
       schedule.value = empData.schedule;
       const role = document.getElementById("role");
-      role.value = empData.role;
+      role.value = empData.job_role;
     } else {
       console.log("Usuario no encontrado");
     }
   };
   loadEmployeeData();
 
-  const saveDataEmployee = (id) => {
-    let employeeList = JSON.parse(localStorage.getItem("employeeList")) || [];
-
-    for (let i = 0; i < employeeList.length; i++) {
+  const saveDataEmployee = async () => {
       const alertDialog = document.getElementById("alert-dialog");
       let checkForm = alertDialog.dataset.checkForm;
       if (checkForm) {
-        const toastNotification = showToast(checkForm);
-        toastContainer.innerHTML = toastNotification;
-        employeeList[i].name = document.getElementById("name").value;
-        employeeList[i].lastname = document.getElementById("lastName").value;
-        employeeList[i].email = document.getElementById("email").value;
-        employeeList[i].phone = document.getElementById("phone").value;
-        employeeList[i].ci = document.getElementById("ci").value;
-        employeeList[i].photo = document.getElementById("photo").value;
-        employeeList[i].schedule = document.getElementById("schedule").value;
-        employeeList[i].role = document.getElementById("role").value;
-        localStorage.setItem("employeeList", JSON.stringify(employeeList));
+        let name = document.getElementById("name").value;
+        let lastname = document.getElementById("lastName").value;
+        let email = document.getElementById("email").value;
+        let phone = document.getElementById("phone").value;
+        let ci = document.getElementById("ci").value;
+        let photo = "foto";
+        let schedule = document.getElementById("schedule").value;
+        let role = document.getElementById("role").value;
+        let updatedEmployee = new Employee(
+          name,
+          lastname,
+          email,
+          phone,
+          ci,
+          photo,
+          schedule,
+          role
+        )
+        
+        const resUpdate=await updateEmployee(empId,updatedEmployee);
+        console.log(resUpdate);
         alertDialog.close();
-          setTimeout(() => {
-            removeToast();
-          }, 3000);
-          break;
+        setTimeout(() => {
+          removeToast();
+        }, 3000);
       } else {
-          const toastNotification = showToast(checkForm);
-          toastContainer.insertAdjacentHTML = toastNotification;
-          console.log(showToast(checkForm));
-          break;
-        }
-    }
+        const toastNotification = showToast(checkForm);
+        toastContainer.insertAdjacentHTML = toastNotification;
+        console.log(showToast(checkForm)); 
+      }
     
   };
 

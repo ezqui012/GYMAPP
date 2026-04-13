@@ -77,10 +77,6 @@ export function initRegisterClient() {
       let photo = document.getElementById("photo").value;
       let email = document.getElementById("email").value;
       let newClient = new Client(idClient, name, lastname, phone, ci, nit, photo, email);
-      console.log(newClient)
-      // //let usersList= JSON.parse(localStorage.getItem("usersList")) || [];
-      // //usersList.push(newClient);
-      // localStorage.setItem("usersList", JSON.stringify(usersList));
       
       createClient(newClient);
       alertDialog.close();

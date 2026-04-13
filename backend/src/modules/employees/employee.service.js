@@ -17,23 +17,39 @@ export const employeEmailWhitoutUser=async()=>{
     
     return users;
 }
-export const createEmployee=async({name, lastname , phone, photo , ci, nit, email})=>{
+export const createEmployee=async({name, lastname , phone, photo , ci, email, schedule, job_role})=>{
     const verifyEmployee= await employeeModel.findEmployeeByEmail(email);
-    if(!verifyEmployee) throw new Error("Email is already in use");
+    if(!verifyEmployee){
+        const error = new Error("Email is already in use");
+        error.status=400;
+        throw error;
+    }
 
-    const employeeData= await employeeModel.createEmployee({name, lastname, phone, photo, ci, nit, email});
+    const employeeData= await employeeModel.createEmployee({name, lastname, phone, photo, ci, email, schedule, job_role});
+    if(!employeeData){
+        const error = new Error('Error creating employee');
+        error.status=500;
+        throw error;
+    }
 
     return employeeData;
 }
 
-export const updateEmployee=async({id, name, lastname , phone, photo , ci, nit, email })=>{
+export const updateEmployee=async({id, name, lastname , phone, photo , ci, nit, email, schedule, job_role })=>{
     
-    const employeeUpdated= await employeeModel.updateEmployee({id,name,lastname,phone,photo,ci,nit,email});
+    const employeeUpdated= await employeeModel.updateEmployee({id, name, lastname, phone, photo, ci, nit, email, schedule, job_role});
     if(!employeeUpdated) throw new Error("Error updating data");
 
     return employeeUpdated;
 }
 
 export const deleteEmployee=async(id)=>{
-    return await employeeModel.deleteEmployee(id);
+    const deletedEmployee= await employeeModel.deleteEmployee(id);
+    if(!deletedEmployee){
+        const error = new Error('Error deleting employee');
+        error.status=500;
+        throw error;
+    };
+    
+    return deleteEmployee;
 }

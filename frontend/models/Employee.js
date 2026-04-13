@@ -1,13 +1,12 @@
 export class Employee{
-    constructor(id, name, lastname, email, phone, ci, photo, schedule, role){
-        this.id=id;
+    constructor(name, lastname, email, phone, ci, photo, schedule, job_role){
         this.name=name;
         this.lastname=lastname;
         this.email=email;
         this.phone=phone;
         this.ci=ci;
         this.photo=photo;
-        this.role=role;
+        this.job_role=job_role;
         this.schedule=schedule;
     }
     toObject(){
@@ -19,13 +18,11 @@ export class Employee{
             ci: this.ci,
             photo: this.photo,
             schedule: this.schedule,
-            role: this.role
+            job_role: this.job_role
         }
     }
     //getters
-    getEmployeeId(){
-        return this.id;
-    }
+
     getEmployeeFullName(){
         return `${this.name}` `${this.lastname}`;
     }
@@ -44,14 +41,12 @@ export class Employee{
     getSchedule(){
         return this.schedule;
     }
-    getRole(){
-        return this.role
+    getJobRole(){
+        return this.job_role
     }
 
     //setters
-    setId(value){
-        this.id=value;
-    }
+    
     setName(value){
         this.name=value;
     }
@@ -73,7 +68,7 @@ export class Employee{
     setSchedule(value){
          this.schedule=value;
     }
-    setRole(value){
+    setJobRole(value){
          this.role=value;
     }    
     setPhoto(value){
