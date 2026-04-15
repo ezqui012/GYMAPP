@@ -1,4 +1,5 @@
 import { loadComponent } from "../../app/app.js";
+
 export function initMembershipTypeList() {
   const btnAddMemType = document.querySelector(".add_membershipType");
   const searchBar = document.getElementById("searchbar");

@@ -95,13 +95,13 @@ function initView(path) {
       import("/controllers/membership/membershipList.js").then((mod) => mod.initMembershipList()).catch((err)=>console.log(err));
       break;  
     case "/membershipType":
-      import("/controllers/membership/membershipType.js").then((mod) => mod.initMembershipType()).catch((err)=>console.log(err));
+      import("/controllers/membershipType/membershipType.js").then((mod) => mod.initMembershipType()).catch((err)=>console.log(err));
       break;
     case "/editMembershipType":
-      import("/controllers/membership/editMembershipType.js").then((mod) => mod.initEditMembershipType()).catch((err)=>console.log(err));
+      import("/controllers/membershipType/editMembershipType.js").then((mod) => mod.initEditMembershipType()).catch((err)=>console.log(err));
       break;
     case "/membershipTypeList":
-      import("/controllers/membership/membershipTypeList.js").then((mod) => mod.initMembershipTypeList()).catch((err)=>console.log(err));
+      import("/controllers/membershipType/membershipTypeList.js").then((mod) => mod.initMembershipTypeList()).catch((err)=>console.log(err));
       break;  
   }
 

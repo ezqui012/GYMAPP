@@ -1,5 +1,6 @@
 import { loadComponent } from "../../app/app.js";
 import { MembershipType } from "../../models/MembershipType.js";
+import { createMembershipType } from "../../services/membershipType.services.js";
 //flag avoid double init
 export function initMembershipType() {
  
@@ -11,32 +12,41 @@ export function initMembershipType() {
   btnModalSubmit.replaceWith(btnModalSubmit.cloneNode(true));   
   const newBtnModalSubmit = document.getElementById('modal_submit');
   
-    function submitMembership(){
+    async function submitMembership(){
     const alertDialog = document.getElementById("alert-dialog");
     const checkDialog = alertDialog.dataset.checkForm;
     if (checkDialog) {
-      const newMembershipType = new MembershipType();
-      newMembershipType.name = document.getElementById("name").value;
+      let newMembershipType = new MembershipType();
+      newMembershipType.name= document.getElementById("name").value;
       newMembershipType.price = document.getElementById("price").value;
       newMembershipType.duration = document.getElementById("duration").value;
-      newMembershipType.description =
-        document.getElementById("description").value;
-      let membershipTypeList = JSON.parse(localStorage.getItem("membershipTypeList")) || [];
-      membershipTypeList.push(newMembershipType);
-      localStorage.setItem("membershipTypeList", JSON.stringify(membershipTypeList));
-      alertDialog.close();
-      const toastNotification = showToast(checkDialog);
-      toastContainer.innerHTML = toastNotification;
-      clearField();
-      setTimeout(() => {
+      newMembershipType.description = document.getElementById("description").value;
+      
+      
+      const membershipTypeCreated=await createMembershipType(newMembershipType);
+      console.log(membershipTypeCreated)
+      if(membershipTypeCreated){
+        console.log('llega')
+        const toastNotification = showToast(checkDialog);
+        toastContainer.innerHTML = toastNotification;
+        alertDialog.close();
+        clearField();
+        setTimeout(() => {
         removeToast();
       }, 3000);
+      } else {
+        console.log(3)
+        const toastNotification = showToast(checkDialog);
+        toastContainer.innerHTML = toastNotification;
+      }
+      
     } else {
       const toastNotification = showToast(checkDialog);
       toastContainer.innerHTML = toastNotification;
     }
     toastContainer.addEventListener("click", () => removeToast());
   }
+
   function sendMembership() {
     const allField = document.querySelectorAll(".field_data");
     const alertDialog = document.getElementById("alert-dialog");
