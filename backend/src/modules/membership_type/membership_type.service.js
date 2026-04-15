@@ -13,8 +13,8 @@ export const getMembership=async(id)=>{
 
 export const createMembershipType=async({name, description, duration, price})=>{
     const nameExist= await membershipTypeModel.findByName(name);
-
-    if(nameExist) throw new Error("Name already exist");
+    console.log(name)
+    if(!nameExist) throw new Error("Name already exist");
     
     const membership= await membershipTypeModel.createMembershipType({name, description, duration, price});
     

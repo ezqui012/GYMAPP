@@ -23,7 +23,7 @@ export const createMembershipType=async(req, res)=>{
     try {
         const {name, description, duration, price}= req.body;
         const membership=await membershipTypeService.createMembershipType({name, description, duration, price});
-        //onsole.log(membership)
+        
         res.status(201).json(membership);
     } catch (error) {
         const status=error.message==='Membership Type is already created' ? 400:500;
