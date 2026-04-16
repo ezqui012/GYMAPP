@@ -1,41 +1,40 @@
 export class MembershipType{
     
-    constructor(membershipName, description, duration, price){
-        this.id=Date.now(),
-        this._membershipName=membershipName,
-        this._description=description,
-        this._duration=duration;
-        this._price=price;
+    constructor(name, description, duration, price){
+        this.name=name,
+        this.description=description,
+        this.duration=duration;
+        this.price=price;
     }
 
-    update({ membershipName, description, duration, price}) {
-        if(membershipName) this._membershipName = membershipName;
-        if(description) this._description = description;
-        if(duration) this._duration = duration;
-        if(price) this._price = price;
+    update({ name, description, duration, price}) {
+        if(name) this.name = name;
+        if(description) this.description = description;
+        if(duration) this.duration = duration;
+        if(price) this.price = price;
     }
-    set name(value){
-        this._membershipName=value;
+    setName(value){
+        this.name=value;
     }
-    set description(value){
-        this._description=value;
+    setDescription(value){
+        this.description=value;
     }
-    set duration(value){
-        this._duration=value;
+    setDuration(value){
+        this.duration=value;
     }
-    set price(value){
-        this._price=value;
+    setPrice(value){
+        this.price=value;
     }
-    get name(){
-        return this._membershipName;
+    getName(){
+        return this.name;
     }
-    get description(){
-        return this._description;
+    getDescription(){
+        return this.description;
     }
-    get duration(){
-        return this._duration;
+    getDuration(){
+        return this.duration;
     }
-    get price(){
-        return this._price;
+    getPrice(){
+        return this.price;
     }
 }

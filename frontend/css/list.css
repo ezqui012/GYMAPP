@@ -117,7 +117,7 @@ img{
 .btn_action.edit_data{
     background-color: #90EE90;
 }
-.btn_action.delete_data{
+.btn_action.delete_data,.btn_action.disable_data{
     background-color: #FF0000;
 }
 
@@ -127,7 +127,7 @@ img{
 .btn_action.edit_data:hover{
     background-color: #90EE9999;
 }
-.btn_action.delete_data:hover{
+.btn_action.delete_data:hover, .btn_action.disable_data:hover{
     background-color: #FF0000aa;
 }
 .actions{

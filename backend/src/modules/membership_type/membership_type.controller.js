@@ -9,6 +9,24 @@ export const getMembershipTypes=async(req, res)=>{
     }
 }
 
+export const getActiveMemberhipTypes=async(req, res)=>{
+    try {
+        const data = await membershipTypeService.getActiveMembershipTypes();
+        res.status(200).json(data)
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+}
+
+export const getInactiveMembershipTypes=async(req,res)=>{
+    try {
+        const data = await membershipTypeService.getInactiveMembershipTypes();
+        res.status(200).json(data)
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+}
+
 export const getMembershipType=async(req, res)=>{
     try {
         const {id}= req.params;
@@ -23,7 +41,7 @@ export const createMembershipType=async(req, res)=>{
     try {
         const {name, description, duration, price}= req.body;
         const membership=await membershipTypeService.createMembershipType({name, description, duration, price});
-        //onsole.log(membership)
+        
         res.status(201).json(membership);
     } catch (error) {
         const status=error.message==='Membership Type is already created' ? 400:500;
@@ -39,20 +57,18 @@ export const updateMembershipType=async(req, res)=>{
         const membershipTypeUpdated= await membershipTypeService.updateMembershipType({id, name, description, duration, price});
         if (membershipTypeUpdated === 0) return res.status(404).json({ message: "User not found" });
 
-        json({message: "Operation done sucessfully"});
+        res.status(204).json({message: "Operation done sucessfully"});
 
     } catch (error) {   
         res.status(500).json({message: error.message})
     }
 }
 
-export const deleteMembershipType=async(req,res)=>{
+export const disableMembershipType=async(req,res)=>{
     try {
         const {id}= req.params;
-        const deleted= await membershipTypeService.deleteMembershipType(id);
-        if(deleted===0) return res.status(404).json({ message: "data not found" });
-
-        res.json("Operation complete")
+        await membershipTypeService.disableMembershipType(id);
+        res.status(204).json({message: "Operation Sucessfully"})
     } catch (error) {
         return res.status(500).json({message: "Internal server error"});
     }
