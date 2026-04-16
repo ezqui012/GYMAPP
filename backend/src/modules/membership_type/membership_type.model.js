@@ -21,7 +21,7 @@ export const getAMembershipType=async(id)=>{
 }
 
 export const createMembershipType=async({name, description, duration, price})=>{
-        const membership=await pool.query('INSERT INTO membership_type (name, description, duration, price) VALUES($1, $2, $3, $4) RETURNING *' , [name, description, duration, price]);
+        const membership=await pool.query('INSERT INTO membership_type (name, description, duration, price, is_active) VALUES($1, $2, $3, $4, $5) RETURNING *' , [name, description, duration, price, true]);
         return membership.rows[0];
 }
 
