@@ -24,9 +24,8 @@ export function initMembershipType() {
       
       
       const membershipTypeCreated=await createMembershipType(newMembershipType);
-      console.log(membershipTypeCreated)
       if(membershipTypeCreated){
-        console.log('llega')
+        
         const toastNotification = showToast(checkDialog);
         toastContainer.innerHTML = toastNotification;
         alertDialog.close();
@@ -35,11 +34,9 @@ export function initMembershipType() {
         removeToast();
       }, 3000);
       } else {
-        console.log(3)
         const toastNotification = showToast(checkDialog);
         toastContainer.innerHTML = toastNotification;
       }
-      
     } else {
       const toastNotification = showToast(checkDialog);
       toastContainer.innerHTML = toastNotification;

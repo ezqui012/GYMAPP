@@ -1,4 +1,6 @@
 import { loadComponent } from "../../app/app.js";
+import { getAMembershipType, updateMembershipType } from "../../services/membershipType.services.js";
+import { MembershipType } from "../../models/MembershipType.js";
 export function initEditMembershipType() {
   const btnSubmit = document.querySelector('.btn_submit');  
   const btnCancelSubmit =document.querySelector('.btn_cancel');
@@ -20,69 +22,50 @@ export function initEditMembershipType() {
   let descriptionField = document.getElementById('description');
   
   //get the membership Type List from local storage
-  const getMembershipTypeData = () => {
-    const membershipTypeList = JSON.parse(
-      localStorage.getItem("membershipTypeList") || []);
-    return membershipTypeList;
+  const getMembershipTypeData = async () => {
+    const membershipTypeData = await getAMembershipType(membershipTypeId);
+    return membershipTypeData;
   };
 
-  //get the membership type data from the given id
-  const findMembershipType=()=>{
-    const membershipList=getMembershipTypeData();
-    const membershipTypeData = membershipList.find(
-      (memType) => memType.id === membershipTypeId
-    );
-  
-    return membershipTypeData;
-  }
-
-  
-  
-
-
   //load membership type data on the fields
-  const loadFieldData=()=>{
-    const membershipTypeData=findMembershipType();
-    nameField.value=membershipTypeData._membershipName;
-    priceField.value=membershipTypeData._price;
-    durationField.value=membershipTypeData._duration;
-    descriptionField.value=membershipTypeData._description;
+  const loadFieldData=async()=>{
+    const membershipTypeData= await getMembershipTypeData();
+    nameField.value=membershipTypeData.name;
+    priceField.value=membershipTypeData.price;
+    durationField.value=membershipTypeData.duration;
+    descriptionField.value=membershipTypeData.description;
   }
 
 
   //update the membership type data in the local storage 
-  function updateMembershipData(){
-   let membershipTypeList=getMembershipTypeData();
-      
-    //let prueba = JSON.parse(localStorage.getItem('membershipTypeList')||[]);
-    for (let i = 0; i < membershipTypeList.length; i++) {
-      if(membershipTypeId===membershipTypeList[i].id){
-        const alertDialog = document.getElementById("alert-dialog");
-      let checkForm = alertDialog.dataset.checkForm;
-      if (checkForm) {
-        const toastNotification = showToast(checkForm);
-        toastContainer.innerHTML = toastNotification;
-        membershipTypeList[i]._membershipName = document.getElementById("name").value;
-        membershipTypeList[i]._price = document.getElementById("price").value;
-        membershipTypeList[i]._duration = document.getElementById("duration").value;
-        membershipTypeList[i]._description = document.getElementById("description").value;
-    
-        localStorage.setItem("membershipTypeList", JSON.stringify(membershipTypeList));
-        alertDialog.close();
-          setTimeout(() => {
-            removeToast();
-          }, 3000);
-          break;
-      } else {
-          const toastNotification = showToast(checkForm);
-          toastContainer.insertAdjacentHTML = toastNotification;
-          console.log(showToast(checkForm));
-          break;
-        }
-       }
-      
+  async function updateMembershipData(){
+    const alertDialog = document.getElementById("alert-dialog");
+    let checkForm = alertDialog.dataset.checkForm;
+    if (checkForm) {
+      const name = document.getElementById("name").value;
+      const price = document.getElementById("price").value;
+      const duration = document.getElementById("duration").value;
+      const description = document.getElementById("description").value;
+      let updatedMembershipTypeData= new MembershipType(
+        name,
+        description,
+        duration,
+        price
+      )
+      const isUpdated=await updateMembershipType(membershipTypeId, updatedMembershipTypeData);
+      if(isUpdated){
+      alertDialog.close();
+      const toastNotification = showToast(checkForm);
+      toastContainer.innerHTML = toastNotification;
+      setTimeout(() => {
+          removeToast();
+        }, 3000);
+      }
+    } else {
+      const toastNotification = showToast(checkForm);
+      toastContainer.insertAdjacentHTML = toastNotification;  
     }
-    
+    toastContainer.addEventListener("click", () => removeToast());
   }
   
 
