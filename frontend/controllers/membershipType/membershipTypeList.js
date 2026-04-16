@@ -1,6 +1,7 @@
 import { loadComponent } from "../../app/app.js";
-
-export function initMembershipTypeList() {
+import { getActiveMembershipTypes } from "../../services/membershipType.services.js";
+import { disableMembershipType } from "../../services/membershipType.services.js";
+export async function initMembershipTypeList() {
   const btnAddMemType = document.querySelector(".add_membershipType");
   const searchBar = document.getElementById("searchbar");
   const containerBtn = document.querySelector(".btn_numbers");
@@ -11,7 +12,7 @@ export function initMembershipTypeList() {
   let since = 0;
   let limit = 11;
   let activePage = 1;
-  let membershipTypes = getMembershipTypeList();
+  let membershipTypes = await getMembershipTypeList();
   
   let pageNumber = Math.ceil(membershipTypes.length / limit);
   
@@ -27,21 +28,21 @@ export function initMembershipTypeList() {
     });
   };
 
-  let deleteAction = () => {
-    const deleteMembershipTyp = document.querySelectorAll(".delete_data");
-    deleteMembershipTyp.forEach((btn) => {
+  let disableAction = () => {
+    const disableBtnMembershipTyp = document.querySelectorAll(".disable_data");
+    disableBtnMembershipTyp.forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        let id = e.currentTarget.dataset.index;
-        deleteData(id);
+        let id = parseInt(e.currentTarget.dataset.index);
+
+        disableData(id);
         loadList();
       });
     });
   };
 
-  let deleteData = (id) => {
+  let disableData = async(id) => {
     if (id !== null) {
-      let membershipType = membershipTypes.filter((membershipTy) => membershipTy.id !== parseInt(id));
-      localStorage.setItem("membershipTypeList", JSON.stringify(membershipType));
+      await disableMembershipType(id);
       loadList();
     } else {
       console.log("error con la posicion del elemento" + pos);
@@ -49,22 +50,21 @@ export function initMembershipTypeList() {
   };
 
   //get membership Type data from local storage
-  function getMembershipTypeList(){
-    const membershipTypeList = JSON.parse(
-      localStorage.getItem("membershipTypeList"))|| [];
-    return membershipTypeList;
+  async function getMembershipTypeList(){
+    const membershipTypeListData = await getActiveMembershipTypes();
+    return membershipTypeListData;
   };
   //load buttons on the table
   const displayButtonOption = (id) => {
     let buttons = `<button class='btn_action view_data' data-index='${id}'><i class="fas fa-eye ver-btn" title="Ver"></i></button>
                  <button class='btn_action edit_data' data-index='${id}'><i class="fas fa-pen editar-btn" title="Editar"></i></button>
-                 <button class='btn_action delete_data' data-index='${id}' ><i class="fas fa-trash borrar-btn" title="Borrar"></i></button>`;
+                 <button class='btn_action disable_data' data-index='${id}' ><i class="fas fa-trash borrar-btn" title="Borrar"></i></button>`;
     return buttons;
   };
 
   //load all data on the table
-  const loadList = () => {
-    let membershipTypeList = getMembershipTypeList();
+  const loadList = async () => {
+    let membershipTypeList = await getMembershipTypeList();
     const tbodyContainer = document.querySelector(".tbody_container");
     tbodyContainer.innerHTML = "";
 
@@ -74,32 +74,32 @@ export function initMembershipTypeList() {
 
       const tdName = document.createElement("td");
       tdName.classList.add("data-table");
-      tdName.innerHTML = membershipTypeList[i]._membershipName;
+      tdName.innerHTML = membershipTypeList[i].name;
       trContainer.appendChild(tdName);
 
       const tdPrice = document.createElement("td");
       tdPrice.classList.add("data-table");
-      tdPrice.innerHTML = membershipTypeList[i]._price + ` bs`;
+      tdPrice.innerHTML = membershipTypeList[i].price + ` bs`;
       trContainer.appendChild(tdPrice);
 
       const tdDuration = document.createElement("td");
       tdDuration.classList.add("data-table");
-      tdDuration.innerHTML = membershipTypeList[i]._duration + ` dias`;
+      tdDuration.innerHTML = membershipTypeList[i].duration + ` dias`;
       trContainer.appendChild(tdDuration);
 
       const tdDescription = document.createElement("td");
       tdDescription.classList.add("data-table");
-      tdDescription.innerHTML = membershipTypeList[i]._description;
+      tdDescription.innerHTML = membershipTypeList[i].description;
       trContainer.appendChild(tdDescription);
 
       let tdButtons = document.createElement("td");
       tdButtons.classList.add("actions");
-      tdButtons.innerHTML = displayButtonOption(membershipTypeList[i].id);
+      tdButtons.innerHTML = displayButtonOption(membershipTypeList[i].id_membership_type);
       trContainer.appendChild(tdButtons);
       tbodyContainer.appendChild(trContainer);
     }
     editButton();
-    deleteAction();
+    disableAction();
     loadButtonPage();
     changePageListeners();
   };
