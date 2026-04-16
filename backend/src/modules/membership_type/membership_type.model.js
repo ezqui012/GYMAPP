@@ -5,6 +5,16 @@ export const getMembershipTypes= async()=>{
     return memberships.rows;
 }
 
+export const getActiveMembershipTypes=async()=>{
+    const memberships= await pool.query('SELECT * from membership_type WHERE is_active=true');
+    return memberships.rows;
+}
+
+export const getInactiveMembershipTypes=async()=>{
+    const memberships = await pool.query('SELECT * from membership_type WHERE is_active=false');
+    return memberships.rows;
+}
+
 export const getAMembershipType=async(id)=>{
     const membershipType= await pool.query('SELECT * from membership_type WHERE id_membership_type=$1',[id]);
     return membershipType.rows[0];
@@ -22,8 +32,8 @@ export const updateMembershipType=async({id, name, description, duration, price}
     return rowCount;
 }
 
-export const deleteMembershipType=async(id)=>{
-    const {rowCount}= await pool.query('DELETE FROM membership_type WHERE id_membership_type=$1', [id]);
+export const disableMembershipType=async(id)=>{
+    const {rowCount}= await pool.query('UPDATE membership_type SET is_active=false WHERE id_membership_type=$1 AND is_active=true', [id]);
     return rowCount;
 }
 

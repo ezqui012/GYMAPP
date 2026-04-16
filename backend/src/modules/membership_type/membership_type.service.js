@@ -4,6 +4,26 @@ export const getMemberships=async()=>{
     return await membershipTypeModel.getMembershipTypes();
 }
 
+export const getActiveMembershipTypes=async()=>{
+    const data=await membershipTypeModel.getActiveMembershipTypes();
+    if(!data){
+        const error = new Error('Data does not exist');
+        error.status = 404
+        throw error;
+    }
+    return data;
+}
+
+export const getInactiveMembershipTypes=async()=>{
+    const data=await membershipTypeModel.getInactiveMembershipTypes();
+    if(!data){
+        const error = new Error('Data does not exist');
+        error.status = 404
+        throw error;
+    }
+    return data;
+}
+
 export const getMembership=async(id)=>{
     const membershipType= await membershipTypeModel.getAMembershipType(id);
     if(!membershipType)throw new Error("Membership does not exist");
@@ -30,6 +50,14 @@ export const updateMembershipType=async({id, name, description, duration, price}
 
 }
 
-export const deleteMembershipType=async(id)=>{
-    return await membershipTypeModel.deleteMembershipType(id);
+export const disableMembershipType=async(id)=>{
+    const disabledMembershipType = await membershipTypeModel.disableMembershipType(id);
+    console.log(id)
+    if(!disabledMembershipType){
+        const error = new Error('Data does not exist');
+        error.status = 404
+        throw error;
+    };
+    
+    return disabledMembershipType;
 }
