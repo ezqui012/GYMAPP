@@ -1,46 +1,93 @@
 
     <form class="form" id="form_membership">
-      <h2>REGISTRAR MEMBRESÍA</h2>
+      <h2>GESTIONAR MEMBRESÍA</h2>
       <div class="input_data_container_membership">
-        <!---Client List -->
-        <div class="input_container_membership">
-          <label for="client" class="field_name">Cliente</label>
-          <select class="field_data membershipType" name="client" id="client"></select>
-          <p class="error" id="client_error"></p>
+        <div class="card_client_container">
+          <div class="client_photo"> 
+            AQUI VA LA FOTO
+          </div>
+          <div class="client_data_container">
+            <p class="client_data"><strong class="text_data_client">Cliente:</strong> Carlos Trejo</p>
+            <p class="client_data"><strong class="text_data_client">Correo:</strong> carl@gmail.com</p>
+            <p class="client_data"><strong class="text_data_client">CI:</strong> 8013495</p>
+          </div>
+          <div class="current_membership_data_container">
+            <p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
+            <p class="current_membership_data"><strong>Premium</strong></p>
+            <p class="current_membership_data">Días restantes</p>
+          </div>
         </div>
-        <!---Membership Type -->
-        <div class="input_container_membership">
-          <label for="membershipType" class="field_name">Tipo de Membresia</label>
-          <select class="field_data membershipType" name="memberType" id="membershipType"></select>
-          <p class="error" id="membershipType_error"></p>
+
+        <div class="card_membership_data_container">
+          <div class="container_membership_data">
+            <p class="membership_title">Datos membresía</p>
+            <div class="action_container">
+              <div class="membership_field_container plan_field">
+                <label class="membership_label" for="membership_type">Seleccionar plan</label>
+                <select class="select_type_membership" name="mebership_types" id="membership_type">
+                  <option value="" class="options">Silver</option>
+                  <option value="" class="options">Zumna</option>
+                  <option value="" class="options">Premium</option>
+                  <option value="" class="options">Gold</option>
+                </select>
+              </div>
+
+              <div class="membership_field_container regist_type_field">
+                  <label class="membership_label" for="membership_type">Tipo de Registro</label>
+                <div class="button_option_container">
+                  <button class="btn_option">Primera vez</button>
+                  <button class="btn_option">Renovación</button>
+                  <button class="btn_option">Cambiar Plan</button>
+                </div>
+              </div>
+              <div class="membership_field_container init_date_field">
+                <label class="membership_label" for="membership_type">Fecha Inicio</label>
+                <input class="membership_init_date" type="date">
+              </div>
+              <div class="membership_field_container end_date_field">
+                <label class="membership_label" for="membership_type">Fecha Fin</label>
+                <p class="membership_end_date">09/05/2026</p>
+              </div>
+            </div>
+            <button class="confirm_subscription"><strong>CONFIRMAR INSCRIPCIÓN</strong></button>
+          </div>
+          <div class="disable_membership_container">
+            <p class="disable_title">Aréa de Terminación</p>
+            <p class="disable_description">Al anular la membresía todos los accesos y beneficios concedios por la misma serán revocados.</p>
+            <button class="disable_button">Anular Membresía</button>
+          </div>
         </div>
-        <!---Init Date-->
-        <div class="input_container_membership">
-          <label for="dateClientEntry" class="field_name">Fecha de ingreso</label>
-          <input type="date" class="field_data membershipType" id="dateClientEntry""/>
-          <p class="error" id="dateClientEntry_error"></p>
+
+        <div class="history_table_container">
+          <table class="history_table">
+            <caption class="table_title"><strong>HISTORIAL DE MEBRESÍAS</strong></caption>
+            <thead class="thead_history">
+              <tr class="history_header" >
+                <th class="history_data">NOMBRE PLAN</th>
+                <th class="history_data">FECHA INICIO</th>
+                <th class="history_data">FECHA FIN</th>
+                <th class="history_data">ESTADO</th>
+              </tr>
+            </thead>
+          <tbody class="tbody_container">
+            <td class="prueba"><li class="circle"><ul class="circle_props">Básico</ul></li></td>
+            <td class="prueba">Abril 15, 2026</td>
+            <td class="prueba"> Mayo 15, 2026</td>
+            <td class="prueba"><div class="state_membership">Activo</div></td>
+          </tbody>
+          </table>
+          
         </div>
-        
-        <!---Membership Data -->
-        <div class="data_container">
-          <p class="membership_data price_data"></p>
-          <p class="membership_data duration_data"></p>
-          <p class="membership_data initDate_data"></p>
-          <p class="membership_data endDate_data"></p>
-        </div>
-      <!--Button group-->
-      <div class="dialog-container">
-        <dialog id="alert-dialog">
-        <h3>Confirmar Registro</h3>
-        <div class="button_container_modal">
+
+       <div class="dialog-container">
+         <dialog id="alert-dialog">
+         <h3>Confirmar Registro</h3>
+         <div class="button_container_modal">
           <button type="button" id="close_modal" class="btn_submit_modal cancel">Cerrar</button>
-          <button id="modal_submit" class="btn_submit_modal confirm">Confirmar</button>
+           <button id="modal_submit" class="btn_submit_modal confirm">Confirmar</button>
+          </div>
+        </dialog>
         </div>
-      </dialog>
       </div>
       <div class="toast_container"></div>
-      <div class="button_container">
-        <button type="button" class="btn_form btn_cancel">Cancelar</button>
-        <button type="button" class="btn_form btn_submit">Añadir</button>
-      </div>
     </form>
