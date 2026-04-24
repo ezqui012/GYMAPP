@@ -1,5 +1,7 @@
 import { loadComponent } from "../../app/app.js";
-export function initMembershipList(){
+import { getClientsByMebershipState } from "../../services/client.services.js";
+
+export async function initMembershipList(){
   const btnAddMem = document.querySelector(".add_membership");
   const searchBar = document.getElementById("searchbar");
   const containerBtn = document.querySelector(".btn_numbers");
@@ -9,112 +11,81 @@ export function initMembershipList(){
   let since = 0;
   let limit = 11;
   let activePage = 1;
-  let membershipList = getMembershipList();
-  
+  let membershipList = await getMembershipList();
   let pageNumber = Math.ceil(membershipList.length / limit);
   
-  let editButton = () => {
-    const editButton = document.querySelectorAll(".edit_data");
-    editButton.forEach((btn) => {
+
+  async function getMembershipList(){
+      const membershipList = await getClientsByMebershipState();
+      return membershipList;
+  }
+
+  const displayButtonOption = (id) => {
+    let buttons = `<button class='btn_action_management ' data-index='${id}'>Gestionar</button>`;
+    return buttons;
+  };
+
+
+  let managementButton = () => {
+    const btnActionManagement = document.querySelectorAll('.btn_action_management');
+    console.log(btnActionManagement)
+    btnActionManagement.forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         let id = e.currentTarget.dataset.index;
-        window.history.pushState({}, "", `/editMembership?id=${id}`);
+        window.history.pushState({}, "", `/membership?id=${id}`);
         loadComponent();
       });
     });
   };
+  const loadList = async() => {
+  const clientData = await getMembershipList()
+  const tbodyContainer = document.querySelector(".tbody_container");
+  tbodyContainer.innerHTML = "";
 
-  let deleteAction = () => {
-    const deleteMembership = document.querySelectorAll(".delete_data");
-    deleteMembership.forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        let id = e.currentTarget.dataset.index;
-        deleteData(id);
-        loadList();
-      });
-    });
-  };
+  for (let i = since; i < since + limit && i < membershipList.length; i++) {
+    const trContainer = document.createElement("tr");
+    trContainer.classList.add("data-row");
 
-  let deleteData = (id) => {
-    if (id !== null) {
-      let membership = membershipList.filter((memberships) => memberships._idMembership !== parseInt(id));
-      membershipList=membership
-      localStorage.setItem("membershipList", JSON.stringify(membershipList));
-      loadList();
-    } else {
-      console.log("error con la posicion del elemento" + pos);
-    }
-  };
-    
-    function getUserData(id){
-      const userslist= JSON.parse(localStorage.getItem('usersList'))||[];
-      const userData=userslist.find((user)=>user.id===parseInt(id));
-      return userData;
-    }
-    function getMembershipList(){
-        const membershipList = JSON.parse(localStorage.getItem('membershipList'));
-        return membershipList;
-    }
+    const tdClient = document.createElement("td");
+    tdClient.classList.add("data-table");
+    tdClient.innerHTML = `${clientData[i].name} ${clientData[i].lastname}` ;
+    trContainer.appendChild(tdClient);
+      
+    const tdCi = document.createElement("td");
+    tdCi.classList.add("data-table");
+    tdCi.innerHTML = `${clientData[i].ci}` ;
+    trContainer.appendChild(tdCi);
 
-    function getMembershipTypeList(){
-      const membershipTypeList = JSON.parse(localStorage.getItem('membershipTypeList'))||[];
-      return membershipTypeList;
-    }
+    const tdEmail = document.createElement("td");
+    tdEmail.classList.add("data-table");
+    tdEmail.innerHTML = `${clientData[i].email}` ;
+    trContainer.appendChild(tdEmail);
 
-    const getAMembershipType=(id)=>{
-      const membershipTypeList=getMembershipTypeList();
-      let membershipTypeData=membershipTypeList.find(membershipType=>membershipType.id===id);
-      return membershipTypeData;
-    } 
+    const tdMembership = document.createElement("td");
+    tdMembership.classList.add("data-table");
+    tdMembership.innerHTML = clientData[i].membership_type_name;
+    trContainer.appendChild(tdMembership);
 
+    const tdMembershipState = document.createElement("td");
+    tdMembershipState.classList.add("data-table");
+    tdMembershipState.innerHTML = clientData[i].state;
+    trContainer.appendChild(tdMembershipState);
 
-    const displayButtonOption = (id) => {
-    let buttons = `<button class='btn_action view_data' data-index='${id}'><i class="fas fa-eye ver-btn" title="Gestionar"></i></button>`;
-    return buttons;
-  };
+    const joinDate = document.createElement("td");
+    joinDate.classList.add("data-table");
+    joinDate.innerHTML = clientData[i].join_date;
+    trContainer.appendChild(joinDate);
 
-    const loadList = () => {
-    
-    const tbodyContainer = document.querySelector(".tbody_container");
-    tbodyContainer.innerHTML = "";
-
-    for (let i = since; i < since + limit && i < membershipList.length; i++) {
-      const trContainer = document.createElement("tr");
-      trContainer.classList.add("data-row");
-
-      const tdClient = document.createElement("td");
-      tdClient.classList.add("data-table");
-      const clientData=getUserData(membershipList[i]._idClient);
-      tdClient.innerHTML = `${clientData.name} ${clientData.lastName}` ;
-      trContainer.appendChild(tdClient);
-
-      const tdMembership = document.createElement("td");
-      tdMembership.classList.add("data-table");
-      const idMembershipType = membershipList[i]._idMembershipType;
-      tdMembership.innerHTML = getAMembershipType(idMembershipType)._membershipName;
-      trContainer.appendChild(tdMembership);
-
-      const tdInitDate = document.createElement("td");
-      tdInitDate.classList.add("data-table");
-      tdInitDate.innerHTML = membershipList[i]._initDate;
-      trContainer.appendChild(tdInitDate);
-
-      const tdEndDate = document.createElement("td");
-      tdEndDate.classList.add("data-table");
-      tdEndDate.innerHTML = membershipList[i]._endDate;
-      trContainer.appendChild(tdEndDate);
-
-      let tdButtons = document.createElement("td");
-      tdButtons.classList.add("actions");
-      tdButtons.innerHTML = displayButtonOption(membershipList[i]._idMembership);
-      trContainer.appendChild(tdButtons);
-      tbodyContainer.appendChild(trContainer);
-    }
-    editButton();
-    deleteAction();
-    loadButtonPage();
-    changePageListeners();
+    let tdButtons = document.createElement("td");
+    tdButtons.classList.add('data-table', 'action_management');
+    tdButtons.innerHTML = displayButtonOption(clientData[i].id_client);
+    trContainer.appendChild(tdButtons);
+    tbodyContainer.appendChild(trContainer);
+  }
+  managementButton();
+  loadButtonPage();
+  changePageListeners();
   };
   loadList();
   function loadButtonPage() {
@@ -203,6 +174,7 @@ export function initMembershipList(){
     window.history.pushState({}, "", "/membership");
     loadComponent();
   });
+  
   btnForward.addEventListener("click", (e) => {
     e.preventDefault();
     changePageForward();
