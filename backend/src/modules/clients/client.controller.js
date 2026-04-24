@@ -1,6 +1,16 @@
 import * as clientService from './client.service.js';
 
 
+
+export const getClientsByMembershipState=async(req,res)=>{
+    try {
+        const clientsByMembershipState= await clientService.getClientsByMembershipState();
+        res.status(200).json(clientsByMembershipState);        
+    } catch (error) {
+        res.status(status).json({message: error.message})
+    }
+}
+
 export const getClient=async(req,res)=>{
     try {
         const {id}= req.params;
