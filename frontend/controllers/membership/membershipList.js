@@ -28,7 +28,6 @@ export async function initMembershipList(){
 
   let managementButton = () => {
     const btnActionManagement = document.querySelectorAll('.btn_action_management');
-    console.log(btnActionManagement)
     btnActionManagement.forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();

@@ -302,6 +302,11 @@ p.error.show{
     padding-right: 10px;
     box-sizing: border-box;
     
+    &:disabled{
+        opacity: 0.5;
+        background-color: grey;
+        color: white;
+    }   
 }
 
 
@@ -322,8 +327,16 @@ p.error.show{
     padding-top: 11px;
     box-sizing: border-box;
     width: 110px;
- 
+    &:disabled{
+        opacity: 0.5;
+        background-color: grey;
+        color: white;
+    }
+    &:focus{
+        border: 1px solid #FF6F61;
+    }
 }
+
 
 .membership_end_date{
     margin: 0;
@@ -349,6 +362,11 @@ p.error.show{
     border: none;
     border-radius: 2px;
     color: #1E1E1E;
+    &:disabled{
+        opacity: 0.5;
+        background-color: grey;
+        color: white;
+    }
     
 }
 
@@ -379,6 +397,11 @@ button.disable_button{
     border-radius: 8px;
     color: #FF6F61;
     background-color: #2C2C2C;
+    &:disabled{
+        opacity: 0.5;
+        background-color: grey;
+        color: white;
+    }
 }
 
 
