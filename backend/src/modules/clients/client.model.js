@@ -1,7 +1,7 @@
 import { pool } from "../../config/db.js";
 
 
-// get clients by state: active, expired, no membership, 
+// get clients by membership state: active, expired, no membership, 
 export const getClientsByMembershipState=async()=>{
     const clients = await pool.query(`select c.id_client, p.name, p.lastname , p.ci, p.email, MIN(m.init_date ) as join_date, mt.name as membership_type_name, 
                                     case
@@ -18,7 +18,23 @@ export const getClientsByMembershipState=async()=>{
 
         return clients.rows;
 }
-
+//get a client by membership state
+export const getAClientByMembershipState=async(id)=>{
+    const client = await pool.query(`select c.id_client, p.name, p.lastname , p.ci, p.email, MIN(m.init_date ) as join_date, mt.name as membership_type_name, 
+                                    case
+                                        when m.is_active=true then 'activo'
+                                        when m.is_active=false then 'expirado'
+                                        when m.id_membership  is null then 'sin membresía'
+                                        when m.end_date < CURRENT_DATE THEN 'expirado'
+                                        when m.end_date - CURRENT_DATE <= 5 THEN 'por_expirar'
+                                        else 'activo'
+                                    end as state
+                                    from person p left join client c on p.id_person =c.id_client left join membership m on c.id_client =m.id_client 
+                                    left join membership_type mt on m.id_membership_type =mt.id_membership_type where c.id_client = p.id_person and c.is_deleted =false
+                                    and c.id_client=$1 
+                                    group by c.id_client, p.name, p.lastname, p.ci, p.email , mt.name, state`, [id]);
+    return client.rows[0];
+}
 //get all clients active, inactive,
 export const getClients=async()=>{
     const clients = await pool.query("SELECT p.* FROM person p INNER JOIN client c ON c.id_client=p.id_person");
