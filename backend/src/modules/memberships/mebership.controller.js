@@ -21,6 +21,16 @@ export const getMembership=async(req, res)=>{
     }
 }
 
+export const getMembershipHistory=async(req, res)=>{
+    try {
+        const {id}= req.params;
+        const memberships = await membershipService.getMembershipHistory(id);
+        res.status(200).json(memberships);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+}
+
 export const createMembership=async(req, res)=>{
     try {
         const {init_date, end_date, is_active, id_membership_type, id_client}=req.body;

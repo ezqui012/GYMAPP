@@ -9,6 +9,16 @@ export const getMembership=async(id)=>{
     return membership;
 }
 
+export const getMembershipHistory=async(id)=>{
+    const memberships = await membershipModel.getMembershipHistory(id);
+    if(!memberships){
+        const error = new Error('Data does not exist');
+        error.status = 404
+        throw error;
+    }
+    return memberships;
+}
+
 export const createMembership=async({init_date, end_date, is_active, id_membership_type, id_client})=>{
     const membership = await membershipModel.createMembership({init_date, end_date, is_active, id_membership_type, id_client});
     return membership;
