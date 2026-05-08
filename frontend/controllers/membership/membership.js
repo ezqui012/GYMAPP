@@ -1,16 +1,44 @@
 import { Membership } from "../../models/Membership.js";
 import { getActiveMembershipTypes } from "../../services/membershipType.services.js";
 import { getClientByMembershipState } from "../../services/client.services.js";
+import { createMembership, getMembershipHistory } from "../../services/membership.services.js";
 export async function initMembership() {
+    const toastContainer=document.querySelector('.toast_container');
+    const allInput = document.querySelectorAll(".field_data");
     const selectClientEntry = document.querySelector(".membership_init_date");
     const urlParams = new URLSearchParams(window.location.search);
     const clientId = parseInt(urlParams.get("id"));
     const selectTypeMembership = document.querySelector('.select_type_membership');
+    
+
     const btnRenovate= document.querySelector('.renovate');
     const btnChangeMembershipType=document.querySelector('.change_plan');
     const btnConfirmSubscription = document.querySelector('.confirm_subscription');
     const btnDisableMembership = document.querySelector('.disable_button');
     const btnFirstTime = document.querySelector('.first_time');
+    const btnCloseModal = document.getElementById("close_modal");
+    const btnModalSubmit = document.getElementById("modal_submit");
+    btnModalSubmit.replaceWith(btnModalSubmit.cloneNode(true));
+    const newBtnSubmitModal = document.getElementById('modal_submit')
+
+    const showToast=(checkform)=>{
+        let message='';
+        let option='';
+        if(checkform){
+        message='Se registro la membresía con éxito!!';
+        option='sucess';
+        }else{
+        message='Hubo un error al registrar, intenta de nuevo';
+        option='error';
+        }
+        let toastNotification=`<div class="toast ${option}">
+                            <p class="toast_message">${message}</p>
+                            </div>`
+        return toastNotification;
+    }
+    const removeToast=()=>{
+        toastContainer.removeChild(toastContainer.firstChild);
+    }
 
     const loadPlans=async()=>{
         const membershipTypes= await getActiveMembershipTypes();
@@ -53,6 +81,7 @@ export async function initMembership() {
 
     const loadClientData=async()=>{
         const clientData= await getClientByMembershipState(clientId);
+        const membership= await getMembershipHistory(clientId);
         const pClientContainer= document.querySelector('.client_data_container');
         const setClientData =`<p class="client_data name"><strong class="text_data_client">Cliente:</strong> ${clientData.name}</p>
                               <p class="client_data email"><strong class="text_data_client">Correo:</strong> ${clientData.email}</p>
@@ -61,12 +90,60 @@ export async function initMembership() {
         if(clientData.state==='sin membresía'){
             const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
             const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
-                                     <p class="current_membership_data "><strong>------</strong></p>
-                                     <p class="current_membership_data">------</p>`
+                                     <p class="current_membership_data "><strong>-------------</strong></p>
+                                     <p class="current_membership_data">------------</p>`
+            pMembershipDataContainer.innerHTML=setMembershipData;
+        }
+        if(membership[0].state==='activo'){
+            const formatedEndDate=formatDate(membership[0].end_date)
+            const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
+            const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
+                                     <p class="current_membership_data "><strong>${membership[0].name}</strong></p>
+                                     <p class="current_membership_data$">Renueva en ${getDaysRemainingMembership(formatedEndDate)} días</p>`
             pMembershipDataContainer.innerHTML=setMembershipData;
         }
         
+    }
 
+    const loadMembershipHistory=async()=>{
+        const tBodyContainer = document.querySelector('.tbody_container');
+        const memberships= await getMembershipHistory(clientId);
+        tBodyContainer.innerHTML = "";
+        for (let i = 0; i < memberships.length; i++) {
+            const trContainer = document.createElement("tr");
+            trContainer.classList.add("data-row");
+
+            const tMembershipName=document.createElement('td');
+            tMembershipName.classList.add('prueba');
+            const luMembershipName=document.createElement('ul');
+            luMembershipName.classList.add('circle_props');
+            luMembershipName.innerHTML=memberships[i].name;
+            
+            tMembershipName.append(luMembershipName);
+            trContainer.append(tMembershipName);
+
+            const tdInitDate=document.createElement('TD');
+            tdInitDate.classList.add('prueba');
+            tdInitDate.innerHTML=formatDate(memberships[i].init_date);
+            trContainer.append(tdInitDate);
+
+            const tdEndDate=document.createElement('TD');
+            tdEndDate.classList.add('prueba');
+            tdEndDate.innerHTML=formatDate(memberships[i].end_date);
+            trContainer.append(tdEndDate);
+
+
+            const tdMembershipStatus=document.createElement('TD');
+            tdMembershipStatus.classList.add('prueba');
+            const stateMembership= document.createElement('div');
+            stateMembership.classList.add('state_membership');
+            stateMembership.innerHTML=memberships[i].state;
+            tdMembershipStatus.append(stateMembership);
+            trContainer.append(tdMembershipStatus)
+            
+            tBodyContainer.append(trContainer);
+        }
+        
     }
 
 
@@ -87,12 +164,30 @@ export async function initMembership() {
         return daysOfMonth;
     }
 
+    const getDaysRemainingMembership=(date)=>{
+        const [year, month, day] = date.split('-').map(Number)
+        const endUTC = Date.UTC(year, month - 1, day)
+        const currentDate= new Date();
+        const currentDateUTC= Date.UTC(
+            currentDate.getUTCFullYear(),
+            currentDate.getUTCMonth(),
+            currentDate.getUTCDate()
+        )
+        console.log(endUTC)
+        const daysRemaining=endUTC-currentDateUTC;
+         console.log('daysRemaining ms:', daysRemaining)
+    
+         const dias = Math.ceil(daysRemaining / (1000 * 60 * 60 * 24));
+        return dias;
+    }
+
+    
     const formatDate =(date)=>{
         let currentDate=new Date(date);
         let [day, month, year]=[currentDate.getUTCDate(), currentDate.getUTCMonth()+1, currentDate.getUTCFullYear()];
         if(day<10)day='0'+day;
         if(month<10)month='0'+month;
-        const currentFormatedDate =`${day}-${month}-${year}`;
+        const currentFormatedDate =`${year}-${month}-${day}`;
         return currentFormatedDate;
     }
     
@@ -106,6 +201,25 @@ export async function initMembership() {
         newDate = `${actualYear}-${actualMonth}-${actualDay}`;
         selectClientEntry.setAttribute("min", newDate);
     };
+
+    const submitChecked=()=>{
+        const alertDialog = document.getElementById("alert-dialog");
+        let checkForm = false;
+        let checks = [];
+        allInput.forEach((field) => {
+        const isValid = validateField(field, field.id);
+        if (!isValid) {
+            checks.push(false);
+        } else {
+            checks.push(true);
+        }
+        });
+        checkForm = checks.every((check) => check === true);
+        if (checkForm) {
+            alertDialog.dataset.checkForm = checkForm;
+            alertDialog.show();
+        }
+    }
 
     const setCurrentDate=()=>{
         let newDate= new Date();
@@ -174,9 +288,84 @@ export async function initMembership() {
         const outputEndDate= document.querySelector('.membership_end_date');
         const duration = await getMembershipDuration();
         const endDate=addDays(initDateValue, duration);
-        console.log(duration)
         outputEndDate.innerHTML=endDate
     }
+
+    const registMembership=async()=>{
+        const alertDialog = document.getElementById("alert-dialog");
+        let checkForm = alertDialog.dataset.checkForm;
+        if(checkForm){
+            const idMembershipType= document.querySelector('.select_type_membership').value;
+            const initDate= document.querySelector('.membership_init_date').value;
+            const endDate = document.querySelector('.membership_end_date').textContent;
+            const idClient = clientId;
+            const isActive =true;
+            let newMembership= new Membership(
+                initDate,
+                endDate,
+                isActive,
+                idMembershipType,
+                idClient
+            );
+            const createdMembership= await createMembership(newMembership);
+            if(createdMembership){
+                console.log("se registro membresía con exito");
+                alertDialog.close();
+                
+                const toastNotification = showToast(checkForm);
+                toastContainer.innerHTML = toastNotification;
+                setTimeout(() => {
+                removeToast();
+                }, 3000);
+            }else{
+                const toastNotification = showToast(false);
+                toastContainer.innerHTML = toastNotification;
+            }
+        } else {
+            const toastNotification = showToast(false);
+            toastContainer.innerHTML = toastNotification;
+        }
+        toastContainer.addEventListener("click", () => removeToast())
+    }
+
+
+    const validateField = (field, id) => {
+        let isValid = false;
+        const inputError = document.getElementById(`${id}_error`);
+        let clearField = field.value.trim();
+
+        if (id && id === "membership_type") {
+            if (clearField !== "memType0") {
+                field.classList.add("valid");
+                field.classList.remove("error");
+                inputError.classList.remove("show");
+                isValid = true;
+            } else {
+                field.classList.add("error");
+                field.classList.remove("valid");
+                inputError.classList.add("show");
+                inputError.textContent = "Elija una opción";
+                isValid = false;
+            }
+        }
+
+        if (id && id === "init_date") {
+            if (clearField !== "") {
+                field.classList.add("valid");
+                field.classList.remove("error");
+                inputError.classList.remove("show");
+                isValid = true;
+            } else {
+                field.classList.add("error");
+                field.classList.remove("valid");
+                inputError.classList.add("show");
+                inputError.textContent = "Elija una fecha";
+                isValid = false;
+            }
+        }
+
+        return isValid;
+    };
 
 
     selectTypeMembership.addEventListener('change', (e)=>{
@@ -194,12 +383,24 @@ export async function initMembership() {
         enableOptions();
     })
 
+    btnConfirmSubscription.addEventListener('click', (e)=>{
+        e.preventDefault();
+        submitChecked();
+    })
 
+    newBtnSubmitModal.addEventListener('click', (e)=>{
+        e.preventDefault();
+        registMembership();
+    })
 
+    btnCloseModal.addEventListener("click", (e)=>{
+        e.preventDefault();
+        const alertDialog= document.getElementById('alert-dialog');
+        alertDialog.close();
+    })
 
-
-
-
+    //console.log(getDaysRemainingMembership('2026-05-21'));
+    loadMembershipHistory()
     disableOptions();
     setCurrentDate();
     loadClientData();

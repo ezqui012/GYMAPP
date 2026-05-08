@@ -18,9 +18,10 @@
             <div class="action_container">
               <div class="membership_field_container plan_field">
                 <label class="membership_label" for="membership_type">Seleccionar plan</label>
-                <select class="select_type_membership" name="mebership_types" id="membership_type">
+                <select class="field_data select_type_membership" name="mebership_types" id="membership_type">
                   <option value="memType0" class="options">Elegir plan</option>
                 </select>
+                <p class="error" id="membership_type_error"></p>
               </div>
 
               <div class="membership_field_container regist_type_field">
@@ -33,7 +34,8 @@
               </div>
               <div class="membership_field_container init_date_field">
                 <label class="membership_label" for="membership_type">Fecha Inicio</label>
-                <input class="membership_init_date" type="date">
+                <input class="field_data membership_init_date" type="date" id="init_date">
+                <p class="error" id="init_date_error"></p>
               </div>
               <div class="membership_field_container end_date_field">
                 <label class="membership_label" for="membership_type">Fecha Fin</label>
@@ -71,13 +73,13 @@
         </div>
 
        <div class="dialog-container">
-         <dialog id="alert-dialog">
-         <h3>Confirmar Registro</h3>
-         <div class="button_container_modal">
-          <button type="button" id="close_modal" class="btn_submit_modal cancel">Cerrar</button>
-           <button id="modal_submit" class="btn_submit_modal confirm">Confirmar</button>
-          </div>
-        </dialog>
+          <dialog id="alert-dialog">
+            <h3>Confirmar Registro</h3>
+            <div class="button_container_modal">
+              <button type="button" id="close_modal" class="btn_submit_modal cancel">Cerrar</button>
+              <button id="modal_submit" class="btn_submit_modal confirm">Confirmar</button>
+            </div>
+         </dialog>
         </div>
       </div>
       <div class="toast_container"></div>
