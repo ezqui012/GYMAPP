@@ -440,11 +440,28 @@ caption.table_title{
 }
 
 
-.prueba{
+.cell_data{
     padding: 5px;
     padding-left: 20px;
+    text-align: start;
     
 }
+.cell_with_dot {
+    display: flex;
+    align-items: start;
+    gap: 8px;
+}
+.state_dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.activo    { background-color: #22c55e; }
+.pendiente   { background-color: #3b82f6; }
+.expirado   { background-color: #6b7280; }
+.cancelado { background-color: #ef4444; }
 
 .state_membership{
     background-color: #4CAF50;
@@ -454,17 +471,7 @@ caption.table_title{
     padding: 10px;
     border-radius: 30px 30px ;
 }
-.circle{
-    list-style-type: none;
-    background-color: #4CAF70;
-    height: 15px;
-    width: 15px;
-    border-radius: 100%;
-}
-.circle_props{
-     margin: 0;
-     padding-left: 20px;
-}
+
 
 
 
