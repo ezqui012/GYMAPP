@@ -19,14 +19,14 @@ export const getMembershipHistory=async(id)=>{
     return memberships;
 }
 
-export const createMembership=async({init_date, end_date, is_active, id_membership_type, id_client})=>{
-    const membership = await membershipModel.createMembership({init_date, end_date, is_active, id_membership_type, id_client});
+export const createMembership=async({init_date, end_date, state, id_membership_type, id_client})=>{
+    const membership = await membershipModel.createMembership({init_date, end_date, state, id_membership_type, id_client});
     return membership;
 }
 
-export const updateMembership=async({id_membership, init_date, end_date, is_active, id_membership_type, id_client})=>{
-    console.log({id_membership, init_date, end_date, is_active, id_membership_type, id_client})
-    const updated= await membershipModel.editMembership({id_membership, init_date, end_date, is_active, id_membership_type, id_client})
+export const updateMembership=async({id_membership, init_date, end_date, state, id_membership_type, id_client})=>{
+    console.log({id_membership, init_date, end_date, state, id_membership_type, id_client})
+    const updated= await membershipModel.editMembership({id_membership, init_date, end_date, state, id_membership_type, id_client})
     //console.log(updated)
     if(!updated) throw new Error("Error updating data");
     return updated;

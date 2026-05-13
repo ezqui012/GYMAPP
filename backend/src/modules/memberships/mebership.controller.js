@@ -33,8 +33,8 @@ export const getMembershipHistory=async(req, res)=>{
 
 export const createMembership=async(req, res)=>{
     try {
-        const {init_date, end_date, is_active, id_membership_type, id_client}=req.body;
-        const membership = await membershipService.createMembership({init_date, end_date, is_active, id_membership_type, id_client})
+        const {init_date, end_date, state, id_membership_type, id_client}=req.body;
+        const membership = await membershipService.createMembership({init_date, end_date, state, id_membership_type, id_client})
 
         res.status(201).json(membership);
     } catch (error) {
@@ -46,8 +46,8 @@ export const updateMembership=async(req, res)=>{
     try {
         const {id} = req.params;
         const id_membership=id;
-        const {init_date, end_date, is_active, id_membership_type, id_client}= req.body;
-        const updated=await membershipService.updateMembership({id_membership, init_date, end_date, is_active, id_membership_type, id_client});
+        const {init_date, end_date, state, id_membership_type, id_client}= req.body;
+        const updated=await membershipService.updateMembership({id_membership, init_date, end_date, state, id_membership_type, id_client});
         if(updated===0) return res.status(404).json({ message: "User not found" });
         res.json("data updated")
     } catch (error) {
