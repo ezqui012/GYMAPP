@@ -40,7 +40,7 @@ export const getAClientByMembershipState=async(id)=>{
     try {
         const client = await pool.query(`SELECT c.id_client, p.name, p.lastname, p.ci, p.email,MIN(m.init_date) as join_date,mt.name as membership_type_name, TO_CHAR(m.end_date, 'YYYY-MM-DD') as end_date,
                                     CASE
-                                        WHEN m.id_membership IS NULL THEN 'sin_membresia'
+                                        WHEN m.id_membership IS NULL THEN 'sin membresia'
                                         ELSE m.state
                                     END as state
                                     FROM person p 
@@ -127,12 +127,12 @@ export const softDeleteClient=async(id)=>{
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
-        await client.query(`UPDATE membership SET is_active='expirado'
-            WHERE id_client=$1 AND is_active='activo'`, [id]);
+        await client.query(`UPDATE membership SET state='expirado'
+            WHERE id_client=$1 AND state='activo'`, [id]);
         
         const { rowCount } = await pool.query(
             `UPDATE client SET is_deleted=$1 
-          WHERE id_client=$2` , ['activo', id]);
+          WHERE id_client=$2` , ['activo', id,ds]);
         
         await client.query('COMMIT')
         return rowCount;

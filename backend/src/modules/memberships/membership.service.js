@@ -24,6 +24,7 @@ export const createMembership=async({init_date, end_date, state, id_membership_t
     return membership;
 }
 
+
 export const updateMembership=async({id_membership, init_date, end_date, state, id_membership_type, id_client})=>{
     console.log({id_membership, init_date, end_date, state, id_membership_type, id_client})
     const updated= await membershipModel.editMembership({id_membership, init_date, end_date, state, id_membership_type, id_client})
@@ -32,3 +33,13 @@ export const updateMembership=async({id_membership, init_date, end_date, state, 
     return updated;
 }
 
+export const changeMembership=async({id_membership, init_date, end_date, id_membership_type, id_client})=>{
+    const changed= await membershipModel.changeMembership({id_membership, init_date, end_date, id_membership_type, id_client});
+    if(!changed) throw new Error("Error updating data");
+    return changed;
+}
+export const cancelMembership=async(id_membership)=>{
+    const membershipCanceled= await membershipModel.cancelMembership(id_membership);
+    if(!membershipCanceled) throw new error("Error fetching data");
+    return membershipCanceled;
+}

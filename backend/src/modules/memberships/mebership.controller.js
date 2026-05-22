@@ -54,3 +54,24 @@ export const updateMembership=async(req, res)=>{
         res.status(500).json({message: error.message});
     }
 }
+
+export const changeMembership=async(req, res)=>{
+    try {
+        const {id_membership, init_date, end_date, id_membership_type, id_client}=req.body;
+        const changed=await membershipService.changeMembership({id_membership, init_date, end_date, id_membership_type, id_client});
+        if(changed===0) return res.status(404).json({ message: "mem not found" });
+        res.status(201).json('Membership created');
+    } catch (error) {
+        res.status(500).json({message: error.message}); 
+    }
+}
+
+export const cancelMembership =async(req,res)=>{
+    try {
+        const {id}=req.params;
+        const canceledMembership= await membershipService.cancelMembership(id);
+        res.json("Membership canceled");
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+}
