@@ -461,7 +461,7 @@ caption.table_title{
 .activo    { background-color: #22c55e; }
 .pendiente   { background-color: #3b82f6; }
 .expirado   { background-color: #6b7280; }
-.cancelado { background-color: #ef4444; }
+.anulado { background-color: #ef4444; }
 
 .state_membership{
     background-color: #4CAF50;

@@ -30,3 +30,20 @@ export const createMembership=async(membership)=>{
         console.error("Error adding data", error);
     }
 }
+
+export const cancelMembership = async(id)=>{
+    try {
+        const response = await fetch(`${API_URL}/cancelMembership/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: "include"
+        });
+        if(!response)throw new error('Error in membership canceling');
+        const data = await response.json()
+        console.log(data)
+    } catch (error) {
+        console.error("Error in canceling membership", error);
+    }
+}

@@ -1,7 +1,7 @@
 import { Membership } from "../../models/Membership.js";
 import { getActiveMembershipTypes } from "../../services/membershipType.services.js";
 import { getClientByMembershipState } from "../../services/client.services.js";
-import { createMembership, getMembershipHistory } from "../../services/membership.services.js";
+import { createMembership, getMembershipHistory, cancelMembership } from "../../services/membership.services.js";
 export async function initMembership() {
     const toastContainer=document.querySelector('.toast_container');
     const allInput = document.querySelectorAll(".field_data");
@@ -55,55 +55,30 @@ export async function initMembership() {
 
     const disableOptions=async()=>{
         const clientData= await getClientByMembershipState(clientId)
-        console.log(clientData)
         const currentMembership= document.querySelector('.current_membership_data');
-        if(clientData.state==='sin membresía'){
+        if(clientData.state==='sin membresia'){
             selectClientEntry.disabled=true;
             selectTypeMembership.disabled=true;
             btnChangeMembershipType.disabled=true;
             btnRenovate.disabled=true;
             btnDisableMembership.disabled=true;
             btnConfirmSubscription.disabled=true;
-        }else if(clientData.state==='activo' || clientData.state==='por_expirar'){
+        }else if(clientData.state==='activo' || clientData.state==='por_expirar' || clientData.state==='anulado'){
             btnFirstTime.disabled=true;
             selectClientEntry.disabled=true;
             selectTypeMembership.disabled=true
         }
     }
 
-    const renovateMembership=async()=>{
-        const memberships= await getMembershipHistory(clientId);
-        
-        const membership=memberships[0];
-        
-        if(membership.state==='activo'|| membership.state==='por_expirar'){
-            const outputEndDate= document.querySelector('.membership_end_date')
-            const initDate= document.querySelector('.membership_init_date');
-            initDate.value=addDays(membership.end_date,1)
-            selectTypeMembership.value=membership.id_membership_type;
-            const formatedEndDate= formatDate(membership.end_date);
-            const duration = parseInt(await getMembershipDuration());
-            const daysRemaining=getDaysRemainingMembership(formatedEndDate);
-            const endDate=addDays(initDate.value, duration);
-            outputEndDate.innerHTML=endDate;
-        }else{
-            if(membership.state==='expirado'){
-                const initDate= document.querySelector('.membership_init_date');
-                selectTypeMembership.value=membership.id_membership_type;
-                initDate.value=setCurrentDate();
-            }
-        }
-    }
-    
     const enableOptions=async()=>{
         const clientData= await getClientByMembershipState(clientId)
         const currentMembership= document.querySelector('.current_membership_data');
-        if(clientData.state==='sin membresía'){
+        if(clientData.state==='sin membresia'){
             selectClientEntry.disabled=false;
             selectTypeMembership.disabled=false;
             btnChangeMembershipType.disabled=false;
             btnRenovate.disabled=false;
-            btnDisableMembership.disabled=false;
+            //btnDisableMembership.disabled=false;
             btnConfirmSubscription.disabled=false;
         }else if(clientData.state==='activo'){
             selectClientEntry.disabled=false;
@@ -114,6 +89,46 @@ export async function initMembership() {
             btnConfirmSubscription.disabled=false;
         }
     }
+    const cancelCurrentMembership=async()=>{
+        const memberships=await getMembershipHistory(clientId);
+        const lastMembershipId=memberships[0].id_membership;
+        const isCanceled=await cancelMembership(lastMembershipId);
+        console.log(isCanceled)
+        if(isCanceled){
+            console.log('membership canceled')
+        }else{console.log('something went wrong')} 
+
+        loadMembershipHistory();
+    }
+    const renovateMembership=async()=>{
+        const memberships= await getMembershipHistory(clientId);
+        btnConfirmSubscription.dataset.actionToMake='renovate';
+        const membership=memberships[0];
+        if(membership.state==='activo'|| membership.state==='por_expirar'){
+            const outputEndDate= document.querySelector('.membership_end_date');
+            const initDate= document.querySelector('.membership_init_date');
+            initDate.value=addDays(membership.end_date,1)
+            selectTypeMembership.value=membership.id_membership_type;
+            const formatedEndDate= formatDate(membership.end_date);
+            const duration = parseInt(await getMembershipDuration());
+            const daysRemaining=getDaysRemainingMembership(formatedEndDate);
+            const endDate=addDays(initDate.value, duration);
+            outputEndDate.innerHTML=endDate;
+        }else{
+            if(membership.state==='expirado'|| membership.state==='anulado'){
+                const initDate= document.querySelector('.membership_init_date');
+                const outputEndDate= document.querySelector('.membership_end_date');
+                selectTypeMembership.value=membership.id_membership_type;
+                setCurrentDate();
+                const duration = parseInt(await getMembershipDuration());
+                const endDate= addDays(initDate.value, duration);
+                outputEndDate.innerHTML=endDate;
+
+            }
+        }
+    }
+    
+    
 
     const loadClientData=async()=>{
         const clientData= await getClientByMembershipState(clientId);
@@ -123,76 +138,87 @@ export async function initMembership() {
                               <p class="client_data email"><strong class="text_data_client">Correo:</strong> ${clientData.email}</p>
                               <p class="client_data ci"><strong class="text_data_client">CI:</strong> ${clientData.ci}</p>`;
         pClientContainer.innerHTML=setClientData;
-        if(clientData.state==='sin membresía'){
+        if(!membership[0] || clientData.state==='sin membresía' || clientData.state==='anulado' ){
             const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
             const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
                                      <p class="current_membership_data "><strong>-------------</strong></p>
                                      <p class="current_membership_data">------------</p>`
             pMembershipDataContainer.innerHTML=setMembershipData;
-        }
-        if(membership[0].state==='activo' || membership[0].state==='por_expirar' ){
+        }else{
+            if(membership[0].state==='activo' || membership[0].state==='por_expirar' ){
             const formatedEndDate=formatDate(membership[0].end_date)
             const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
             const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
                                      <p class="current_membership_data "><strong>${membership[0].name}</strong></p>
                                      <p class="current_membership_data$">Renueva en ${getDaysRemainingMembership(formatedEndDate)} días</p>`
             pMembershipDataContainer.innerHTML=setMembershipData;
-        }else if(membership[0].state==='expirado'){
-            const formatedEndDate=formatDate(membership[0].end_date)
-            const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
-            const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
-                                     <p class="current_membership_data "><strong>${membership[0].name}</strong></p>
-                                     <p class="current_membership_data$">Membresía Expirada</p>`
-            pMembershipDataContainer.innerHTML=setMembershipData
+            }else{
+                if(membership[0].state==='expirado'){
+                    const formatedEndDate=formatDate(membership[0].end_date)
+                    const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
+                    const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
+                                            <p class="current_membership_data "><strong>${membership[0].name}</strong></p>
+                                            <p class="current_membership_data$">Membresía Expirada</p>`
+                    pMembershipDataContainer.innerHTML=setMembershipData
+                }else {
+                    if(membership[0].state==='pendiente'){
+                        const formatedEndDate=formatDate(membership[1].end_date)
+                        const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
+                        const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
+                                                <p class="current_membership_data "><strong>${membership[1].name}</strong></p>
+                                                <p class="current_membership_data$">Renueva en ${getDaysRemainingMembership(formatedEndDate)}</p>`
+                        pMembershipDataContainer.innerHTML=setMembershipData
+                    }
+                }
+
+            } 
         }
         
         
     }
 
 
-    /**<td class="prueba"><li class="circle"><ul class="circle_props">Básico</ul></li></td>
-            <td class="prueba">Abril 15, 2026</td>
-            <td class="prueba"> Mayo 15, 2026</td>
-            <td class="prueba"><div class="state_membership">Activo</div></td> */
     const loadMembershipHistory=async()=>{
         const tBodyContainer = document.querySelector('.tbody_container');
         const memberships= await getMembershipHistory(clientId);
         tBodyContainer.innerHTML = "";
-        for (let i = 0; i < memberships.length; i++) {
-            const trContainer = document.createElement("tr");
-            trContainer.classList.add("data-row");
+        if(!memberships[0]){
+            tBodyContainer.innerHTML = "";
+        }else{
+            for (let i = 0; i < memberships.length; i++) {
+                const trContainer = document.createElement("tr");
+                trContainer.classList.add("data-row");
+                const tMembershipName=` <td class='cell_data'>
+                                            <div class="cell_with_dot">
+                                                <span class="state_dot ${memberships[i].state}"></span>
+                                                ${memberships[i].name}
+                                            </div>
+                                        </td>`
+                trContainer.innerHTML=tMembershipName;
 
-            const tMembershipName=` <td class='cell_data'>
-                                        <div class="cell_with_dot">
-                                            <span class="state_dot ${memberships[i].state}"></span>
-                                            ${memberships[i].name}
-                                        </div>
-                                    </td>`
-            trContainer.innerHTML=tMembershipName;
+                const tdInitDate=document.createElement('TD');
+                tdInitDate.classList.add('cell_data');
+                tdInitDate.innerHTML=formatDate(memberships[i].init_date);
+                trContainer.append(tdInitDate);
 
-            const tdInitDate=document.createElement('TD');
-            tdInitDate.classList.add('cell_data');
-            tdInitDate.innerHTML=formatDate(memberships[i].init_date);
-            trContainer.append(tdInitDate);
-
-            const tdEndDate=document.createElement('TD');
-            tdEndDate.classList.add('cell_data');
-            tdEndDate.innerHTML=formatDate(memberships[i].end_date);
-            trContainer.append(tdEndDate);
+                const tdEndDate=document.createElement('TD');
+                tdEndDate.classList.add('cell_data');
+                tdEndDate.innerHTML=formatDate(memberships[i].end_date);
+                trContainer.append(tdEndDate);
 
 
-            const tdMembershipStatus=document.createElement('TD');
-            tdMembershipStatus.classList.add('cell_data');
-            const stateMembership= document.createElement('div');
-            stateMembership.classList.add('state_membership');
-            stateMembership.innerHTML=memberships[i].state;
-            const newElement=changeRowStyle(stateMembership,memberships[i].state);
-            tdMembershipStatus.append(newElement);
-            trContainer.append(tdMembershipStatus)
-            
-            tBodyContainer.append(trContainer);
+                const tdMembershipStatus=document.createElement('TD');
+                tdMembershipStatus.classList.add('cell_data');
+                const stateMembership= document.createElement('div');
+                stateMembership.classList.add('state_membership');
+                stateMembership.innerHTML=memberships[i].state;
+                const newElement=changeRowStyle(stateMembership,memberships[i].state);
+                tdMembershipStatus.append(newElement);
+                trContainer.append(tdMembershipStatus)
+                
+                tBodyContainer.append(trContainer);
+            }
         }
-        
     }
 
 
@@ -203,6 +229,12 @@ export async function initMembership() {
         }else if(state==='pendiente'){
             element.style.backgroundColor='orange';
         }
+        if(state==='anulado'){
+            element.style.backgroundColor='Grey';
+            element.style.opacity=0.5;
+        }
+
+
         return element;
     }
 
@@ -282,7 +314,7 @@ export async function initMembership() {
         const initDate= document.querySelector('.membership_init_date');
         let endDate= document.querySelector('.membership_end_date');
         let [day,month,year]=[newDate.getDate(), newDate.getMonth() +1, newDate.getFullYear()];
-
+        
         if(day<10)day='0'+day;
         if(month<10)month='0'+month;
         const newDateFormated= `${year}-${month}-${day}`;
@@ -348,18 +380,31 @@ export async function initMembership() {
     }
 
     const registMembership=async()=>{
+        const lastMembershipState= await getMembershipHistory(clientId);
+        const actionToTake=btnConfirmSubscription.dataset.actionToMake;
+        let state="";
+        if(Array.isArray(lastMembershipState)  || lastMembershipState[0].state==='sin membresia'){
+            state='activo'
+        }else {
+            if(lastMembershipState[0].state==='activo' && actionToTake ==='renovate')state="pendiente";
+            if(lastMembershipState[0].state==='expirado' && actionToTake ==='renovate')state="activo";
+            if(lastMembershipState[0].state==='activo' && actionToTake ==='change_membership')state="activo";
+            if(lastMembershipState[0].state==='expirado' && actionToTake ==='change_membership')state="activo";
+        };
+        
         const alertDialog = document.getElementById("alert-dialog");
+        console.log(state)
         let checkForm = alertDialog.dataset.checkForm;
         if(checkForm){
             const idMembershipType= document.querySelector('.select_type_membership').value;
             const initDate= document.querySelector('.membership_init_date').value;
             const endDate = document.querySelector('.membership_end_date').textContent;
             const idClient = clientId;
-            const isActive =true;
+            
             let newMembership= new Membership(
                 initDate,
                 endDate,
-                isActive,
+                state,
                 idMembershipType,
                 idClient
             );
@@ -381,6 +426,9 @@ export async function initMembership() {
             const toastNotification = showToast(false);
             toastContainer.innerHTML = toastNotification;
         }
+        loadClientData();
+        loadMembershipHistory();
+        
         toastContainer.addEventListener("click", () => removeToast())
     }
 
@@ -463,6 +511,11 @@ export async function initMembership() {
         e.preventDefault();
         const alertDialog= document.getElementById('alert-dialog');
         alertDialog.close();
+    })
+
+    btnDisableMembership.addEventListener('click', (e)=>{
+        e.preventDefault()
+        cancelCurrentMembership();
     })
 
     loadMembershipHistory()

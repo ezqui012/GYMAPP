@@ -1,43 +1,43 @@
 export class Membership{
 
-    constructor(initDate, endDate, isActive, idMembershipType, idClient ){
+    constructor(initDate, endDate, state, idMembershipType, idClient ){
         this.id_client=idClient;
         this.id_membership_type=idMembershipType;
         this.init_date=initDate;
-        this.is_active=isActive;
+        this.state=state;
         this.end_date=endDate;
         
     };
-    set isActive(value){
-        this.is_active=value;
+    setState(value){
+        this.state=value;
     }
-    set idClient(value){
+    setIdClient(value){
         this.id_client=value;
     }
-    set idMembershipType(value){
+    setIdMembershipType(value){
         this.id_membership_type=value;
     }
-    set initDate(value){
+    setInitDate(value){
         this.init_date=value;
     }
-    set endDate(value){
+    setEndDate(value){
         this.end_date=value;
     }
 
-    get isActive(){
-        return this.is_active;
+    getState(){
+        return this.state;
     }
 
-    get idClient(){
+    getIdClient(){
         return this.id_client;
     }
-    get idMembershipType(){
+    getIdMembershipType(){
         return this.id_membership_type;
     }
-    get initDate(){
+    getInitDate(){
         return this.init_date;
     }
-    get endDateClient(){
+    getEndDateClient(){
         return this.end_date;
     }
 
