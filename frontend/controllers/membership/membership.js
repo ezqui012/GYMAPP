@@ -1,7 +1,7 @@
 import { Membership } from "../../models/Membership.js";
 import { getActiveMembershipTypes } from "../../services/membershipType.services.js";
 import { getClientByMembershipState } from "../../services/client.services.js";
-import { createMembership, getMembershipHistory, cancelMembership } from "../../services/membership.services.js";
+import { createMembership, getMembershipHistory, cancelMembership, changeMembership } from "../../services/membership.services.js";
 export async function initMembership() {
     const toastContainer=document.querySelector('.toast_container');
     const allInput = document.querySelectorAll(".field_data");
@@ -40,7 +40,7 @@ export async function initMembership() {
         toastContainer.removeChild(toastContainer.firstChild);
     }
 
-    const loadPlans=async()=>{
+    const loadTypeMemberships=async()=>{
         const membershipTypes= await getActiveMembershipTypes();
         const selectField= document.querySelector('.select_type_membership');
         selectField.innerHTML="";
@@ -52,6 +52,21 @@ export async function initMembership() {
             selectField.append(newOpt)   
         }
     }
+    const loadLastMembership=async()=>{
+        const memberships= await getMembershipHistory(clientId);
+        const lastMembership=memberships[0];
+        if(lastMembership){
+            if(lastMembership.state==='expirado' || lastMembership.state==='anulado' || lastMembership.state==='activo'){
+                const endDate= document.querySelector('.membership_end_date');
+                selectTypeMembership.value=lastMembership.id_membership_type;
+                setCurrentDate();
+                const initDate= document.querySelector('.membership_init_date');
+                const duration = parseInt(await getMembershipDuration());
+                endDate.innerHTML=addDays(initDate.value, duration);
+            }
+        }
+    }
+
 
     const disableOptions=async()=>{
         const clientData= await getClientByMembershipState(clientId)
@@ -76,10 +91,8 @@ export async function initMembership() {
         if(clientData.state==='sin membresia'){
             selectClientEntry.disabled=false;
             selectTypeMembership.disabled=false;
-            btnChangeMembershipType.disabled=false;
-            btnRenovate.disabled=false;
-            //btnDisableMembership.disabled=false;
             btnConfirmSubscription.disabled=false;
+            btnConfirmSubscription.dataset.actionToTake='first_time';
         }else if(clientData.state==='activo'){
             selectClientEntry.disabled=false;
             selectTypeMembership.disabled=false;
@@ -101,8 +114,7 @@ export async function initMembership() {
         loadMembershipHistory();
     }
     const renovateMembership=async()=>{
-        const memberships= await getMembershipHistory(clientId);
-        btnConfirmSubscription.dataset.actionToMake='renovate';
+        const memberships= await getMembershipHistory(clientId);;
         const membership=memberships[0];
         if(membership.state==='activo'|| membership.state==='por_expirar'){
             const outputEndDate= document.querySelector('.membership_end_date');
@@ -127,6 +139,33 @@ export async function initMembership() {
             }
         }
     }
+
+    const changeANewMembership=async()=>{
+        const memberships= await getMembershipHistory(clientId);
+        selectClientEntry.disabled=false;
+        selectTypeMembership.disabled=false;
+        const lastMembership=memberships[0];
+        if(lastMembership.state==='activo'|| lastMembership.state==='por_expirar'){
+            const outputEndDate= document.querySelector('.membership_end_date');
+            const initDate= document.querySelector('.membership_init_date');
+            const formatedEndDate= formatDate(lastMembership.end_date);
+            const daysRemaining=getDaysRemainingMembership(formatedEndDate);
+            const duration = parseInt(await getMembershipDuration());
+            const finalDuration = daysRemaining+ duration;
+            const endDate=addDays(initDate.value, finalDuration);
+            outputEndDate.innerHTML=endDate;
+        }else{
+            if(lastMembership.state==='expirado'|| lastMembership.state==='anulado'){
+                const initDate= document.querySelector('.membership_init_date');
+                const outputEndDate= document.querySelector('.membership_end_date');
+                const duration = parseInt(await getMembershipDuration());
+                const endDate= addDays(initDate.value, duration);
+                outputEndDate.innerHTML=endDate;
+            }
+        }
+    }
+
+
     
     
 
@@ -279,16 +318,7 @@ export async function initMembership() {
         return currentFormatedDate;
     }
     
-    const validateDate = () => {
-        let newDate = "";
-        let actualDay = new Date().getDate();
-        let actualMonth = new Date().getMonth() + 1;
-        const actualYear = new Date().getFullYear();
-        if (actualMonth < 10)actualMonth = "0" + actualMonth;
-        if (actualDay < 10)actualDay = "0" + actualDay;
-        newDate = `${actualYear}-${actualMonth}-${actualDay}`;
-        selectClientEntry.setAttribute("min", newDate);
-    };
+    
 
     const submitChecked=()=>{
         const alertDialog = document.getElementById("alert-dialog");
@@ -371,36 +401,40 @@ export async function initMembership() {
         return finalFormatedDate;
     }
 
-    const processMembershipDate=async(state)=>{
-        const initDateValue = document.querySelector('.membership_init_date').value;
-        const outputEndDate= document.querySelector('.membership_end_date');
-        const duration = await getMembershipDuration();
-        const endDate=addDays(initDateValue, duration);
-        outputEndDate.innerHTML=endDate;
+    const processMembershipDate=async()=>{
+        const memberships= await getMembershipHistory(clientId);
+        const lastMembership=memberships[0] || [];
+        if(Array.isArray(lastMembership) || lastMembership.state==='sin membresia' ){
+            const initDateValue = document.querySelector('.membership_init_date').value;
+            const outputEndDate= document.querySelector('.membership_end_date');
+            const duration = await getMembershipDuration();
+            const endDate=addDays(initDateValue, duration);
+            outputEndDate.innerHTML=endDate;
+        }
     }
 
     const registMembership=async()=>{
-        const lastMembershipState= await getMembershipHistory(clientId);
-        const actionToTake=btnConfirmSubscription.dataset.actionToMake;
+        const lastMembership= await getMembershipHistory(clientId);
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        const actionToTake=containerMembershipData.dataset.actionToTake;
         let state="";
-        if(Array.isArray(lastMembershipState)  || lastMembershipState[0].state==='sin membresia'){
+        if(Array.isArray(lastMembership)  || lastMembership[0].state==='sin membresia'){
             state='activo'
         }else {
-            if(lastMembershipState[0].state==='activo' && actionToTake ==='renovate')state="pendiente";
-            if(lastMembershipState[0].state==='expirado' && actionToTake ==='renovate')state="activo";
-            if(lastMembershipState[0].state==='activo' && actionToTake ==='change_membership')state="activo";
-            if(lastMembershipState[0].state==='expirado' && actionToTake ==='change_membership')state="activo";
+            if(lastMembership[0].state==='activo' && actionToTake ==='renovate')state="pendiente";
+            if(lastMembership[0].state==='expirado' && actionToTake ==='renovate')state="activo";
+            if(lastMembership[0].state==='activo' && actionToTake ==='change_membership')state="activo";
+            if(lastMembership[0].state==='expirado' && actionToTake ==='change_membership')state="activo";
         };
         
         const alertDialog = document.getElementById("alert-dialog");
-        console.log(state)
         let checkForm = alertDialog.dataset.checkForm;
         if(checkForm){
             const idMembershipType= document.querySelector('.select_type_membership').value;
             const initDate= document.querySelector('.membership_init_date').value;
             const endDate = document.querySelector('.membership_end_date').textContent;
             const idClient = clientId;
-            
+            let createdMembership={};
             let newMembership= new Membership(
                 initDate,
                 endDate,
@@ -408,7 +442,10 @@ export async function initMembership() {
                 idMembershipType,
                 idClient
             );
-            const createdMembership= await createMembership(newMembership);
+            if(actionToTake==='change_membership'){
+                createdMembership = await changeMembership(lastMembership[0].id_membership,newMembership);
+            }else createdMembership= await createMembership(newMembership);
+            
             if(createdMembership){
                 console.log("se registro membresía con exito");
                 alertDialog.close();
@@ -470,31 +507,71 @@ export async function initMembership() {
 
         return isValid;
     };
-
+    const validateDate = () => {
+        let newDate = "";
+        let actualDay = new Date().getDate();
+        let actualMonth = new Date().getMonth() + 1;
+        const actualYear = new Date().getFullYear();
+        if (actualMonth < 10)actualMonth = "0" + actualMonth;
+        if (actualDay < 10)actualDay = "0" + actualDay;
+        newDate = `${actualYear}-${actualMonth}-${actualDay}`;
+        selectClientEntry.setAttribute("min", newDate);
+    };
 
     selectTypeMembership.addEventListener('change', (e)=>{
         e.preventDefault();
-        processMembershipDate();
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        const actionToTake = containerMembershipData.dataset.actionToTake;
+        if(actionToTake==='first_time'){
+            processMembershipDate();
+        }
+        if(actionToTake==='renovate'){
+            renovateMembership();
+        }
+        if (actionToTake==='change_membership') {
+            changeANewMembership();
+        }
     })
 
     selectClientEntry.addEventListener('change', (e)=>{
         e.preventDefault()
-        processMembershipDate();
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        const actionToTake = containerMembershipData.dataset.actionToTake;
+        if(actionToTake==='first_time'){
+            processMembershipDate();
+        }
+        if(actionToTake==='renovate'){
+            renovateMembership();
+        }
+        if (actionToTake==='change_membership') {
+            changeANewMembership();
+            
+        }
     })
 
     btnFirstTime.addEventListener('click', (e)=>{
         e.preventDefault();
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        containerMembershipData.dataset.actionToTake='first_time';
         enableOptions();
     })
 
     btnRenovate.addEventListener('click',(e)=>{
         e.preventDefault();
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        containerMembershipData.dataset.actionToTake='renovate';
+        selectClientEntry.disabled=true;
+        selectTypeMembership.disabled=true;
         renovateMembership();
     })
 
     btnChangeMembershipType.addEventListener('click', (e)=>{
         e.preventDefault();
-        enableOptions()
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        containerMembershipData.dataset.actionToTake='change_membership';
+        selectClientEntry.disabled=false;
+        selectTypeMembership.disabled=false;
+        setCurrentDate();
     })
 
     btnConfirmSubscription.addEventListener('click', (e)=>{
@@ -523,6 +600,7 @@ export async function initMembership() {
     setCurrentDate();
     loadClientData();
     validateDate();
-    loadPlans();
+    loadTypeMemberships();
+    loadLastMembership();
 }
 initMembership();

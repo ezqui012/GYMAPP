@@ -47,3 +47,23 @@ export const cancelMembership = async(id)=>{
         console.error("Error in canceling membership", error);
     }
 }
+
+export const changeMembership=async(id_membership,membership)=>{
+    try {
+        const response = await fetch(`${API_URL}/changeMembership`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({id_membership,membership}),
+            credentials:"include"
+        });
+        if(!response)throw new Error("Error processing membership");
+
+        const data = await response.json();
+        return data;
+        
+    } catch (error) {
+        console.error("Error in membership creation");
+    }
+}
