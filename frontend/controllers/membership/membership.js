@@ -1,299 +1,606 @@
 import { Membership } from "../../models/Membership.js";
-export function initMembership() {
-  const allInput = document.querySelectorAll('.field_data')
-  const selectMem = document.getElementById("membershipType");
-  const selectClientEntry = document.getElementById("dateClientEntry");
-  const btnSubmit = document.querySelector(".btn_submit");
-  const btnCancel = document.querySelector(".btn_cancel");
-  const toastContainer= document.querySelector('.toast_container');
-  const btnModalSubmit = document.getElementById("modal_submit");
-  const btnModalCancel = document.getElementById("close_modal");
-  btnModalSubmit.replaceWith(btnModalSubmit.cloneNode(true));
-  const newBtnSubmitModal = document.getElementById('modal_submit');
-  
-  let endDate = "";
+import { getActiveMembershipTypes } from "../../services/membershipType.services.js";
+import { getClientByMembershipState } from "../../services/client.services.js";
+import { createMembership, getMembershipHistory, cancelMembership, changeMembership } from "../../services/membership.services.js";
+export async function initMembership() {
+    const toastContainer=document.querySelector('.toast_container');
+    const allInput = document.querySelectorAll(".field_data");
+    const selectClientEntry = document.querySelector(".membership_init_date");
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientId = parseInt(urlParams.get("id"));
+    const selectTypeMembership = document.querySelector('.select_type_membership');
+    
 
+    const btnRenovate= document.querySelector('.renovate');
+    const btnChangeMembershipType=document.querySelector('.change_plan');
+    const btnConfirmSubscription = document.querySelector('.confirm_subscription');
+    const btnDisableMembership = document.querySelector('.disable_button');
+    const btnFirstTime = document.querySelector('.first_time');
+    const btnCloseModal = document.getElementById("close_modal");
+    const btnModalSubmit = document.getElementById("modal_submit");
+    btnModalSubmit.replaceWith(btnModalSubmit.cloneNode(true));
+    const newBtnSubmitModal = document.getElementById('modal_submit')
 
-  const showToast=(checkform)=>{
-    let message='';
-    let option='';
-    if(checkform){
-      message='Se registro al usuario con éxito!!';
-      option='sucess';
-    }else{
-      message='Hubo un error al registrar, intenta de nuevo';
-      option='error';
+    const showToast=(checkform)=>{
+        let message='';
+        let option='';
+        if(checkform){
+        message='Se registro la membresía con éxito!!';
+        option='sucess';
+        }else{
+        message='Hubo un error al registrar, intenta de nuevo';
+        option='error';
+        }
+        let toastNotification=`<div class="toast ${option}">
+                            <p class="toast_message">${message}</p>
+                            </div>`
+        return toastNotification;
     }
-    let toastNotification=`<div class="toast ${option}">
-                           <p class="toast_message">${message}</p>
-                           </div>`
-    return toastNotification;
-  }
-  const removeToast=()=>{
-    toastContainer.removeChild(toastContainer.firstChild);
-  }
-
-
-  function getClientList() {
-    const clientList = JSON.parse(localStorage.getItem("usersList"));
-    return clientList;
-  }
-
-  function getMembershipTypeList() {
-    const membershiptTypeList = JSON.parse(
-      localStorage.getItem("membershipTypeList")
-    );
-    return membershiptTypeList;
-  }
-
-  function loadClientList() {
-    const selectClient = document.getElementById("client");
-    selectClient.innerHTML = "";
-    const firstOpt = document.createElement("OPTION");
-    firstOpt.classList.add("opt-client");
-    firstOpt.setAttribute("value", "client0");
-    firstOpt.textContent = "Asignar cliente";
-    selectClient.append(firstOpt);
-    const clients = getClientList();
-    for (let i = 0; i < clients.length; i++) {
-      const newOption = document.createElement("option");
-      newOption.classList.add("opt-client");
-      newOption.value = clients[i].id;
-      newOption.text = `${clients[i].name} ${clients[i].lastName}`;
-      selectClient.append(newOption);
-    }
-  }
-
-  function loadMembershipTypeList() {
-    const selectMembershipType = document.getElementById("membershipType");
-    selectMembershipType.innerHTML = "";
-    const firstOpt = document.createElement("OPTION");
-    firstOpt.classList.add("opt-memberType");
-    firstOpt.setAttribute("value", "memType0");
-    firstOpt.textContent = "Asignar Tipo de Membresia";
-    selectMembershipType.append(firstOpt);
-    const membershipTypeList = getMembershipTypeList();
-    for (let i = 0; i < membershipTypeList.length; i++) {
-      const newOption = document.createElement("option");
-      newOption.classList.add("opt-memberType");
-      newOption.value= membershipTypeList[i].id;
-      newOption.text = `${membershipTypeList[i]._membershipName}`;
-      selectMembershipType.appendChild(newOption);
-    }
-  }
-
-  const selectedMembershipData = (id) => {
-    const membershipList = getMembershipTypeList();
-    let membershipSelected = null;
-    if (membershipList) {
-      membershipSelected = membershipList.find(
-        (memebership) => memebership.id === id
-      );
+    const removeToast=()=>{
+        toastContainer.removeChild(toastContainer.firstChild);
     }
 
-    return membershipSelected;
-  };
-
-  const validateDate = () => {
-    let newDate = "";
-    let actualDay = new Date().getDate();
-    let actualMonth = new Date().getMonth() + 1;
-    const actualYear = new Date().getFullYear();
-    if (actualMonth < 10) {
-      actualMonth = "0" + actualMonth;
+    const loadTypeMemberships=async()=>{
+        const membershipTypes= await getActiveMembershipTypes();
+        const selectField= document.querySelector('.select_type_membership');
+        selectField.innerHTML="";
+        for (let i = 0; i < membershipTypes.length; i++) {
+            const newOpt= document.createElement('OPTION');
+            newOpt.classList.add('options');
+            newOpt.innerHTML=membershipTypes[i].name;
+            newOpt.value=membershipTypes[i].id_membership_type;
+            selectField.append(newOpt)   
+        }
     }
-    if (actualDay < 10) {
-      actualDay = "0" + actualDay;
+    const loadLastMembership=async()=>{
+        const memberships= await getMembershipHistory(clientId);
+        const lastMembership=memberships[0];
+        if(lastMembership){
+            if(lastMembership.state==='expirado' || lastMembership.state==='anulado' || lastMembership.state==='activo'){
+                const endDate= document.querySelector('.membership_end_date');
+                selectTypeMembership.value=lastMembership.id_membership_type;
+                setCurrentDate();
+                const initDate= document.querySelector('.membership_init_date');
+                const duration = parseInt(await getMembershipDuration());
+                endDate.innerHTML=addDays(initDate.value, duration);
+            }
+        }
     }
-    newDate = `${actualYear}-${actualMonth}-${actualDay}`;
-    selectClientEntry.setAttribute("min", newDate);
-  };
 
-  const parseInputDate = (inputValue) => {
-    if (!inputValue) return null;
 
-    const [year, month, day] = inputValue.split("-");
-    return new Date(year, month - 1, day);
-  };
-
-  const formatDate = (date) => {
-    let formatedDate = "";
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    if (day < 10) {
-      day = "0" + day;
+    const disableOptions=async()=>{
+        const clientData= await getClientByMembershipState(clientId)
+        const currentMembership= document.querySelector('.current_membership_data');
+        if(clientData.state==='sin membresia'){
+            selectClientEntry.disabled=true;
+            selectTypeMembership.disabled=true;
+            btnChangeMembershipType.disabled=true;
+            btnRenovate.disabled=true;
+            btnDisableMembership.disabled=true;
+            btnConfirmSubscription.disabled=true;
+        }else if(clientData.state==='activo' || clientData.state==='por_expirar' || clientData.state==='anulado'){
+            btnFirstTime.disabled=true;
+            selectClientEntry.disabled=true;
+            selectTypeMembership.disabled=true
+        }
     }
-    if (month < 10) {
-      month = "0" + month;
+
+    const enableOptions=async()=>{
+        const clientData= await getClientByMembershipState(clientId)
+        const currentMembership= document.querySelector('.current_membership_data');
+        if(clientData.state==='sin membresia'){
+            selectClientEntry.disabled=false;
+            selectTypeMembership.disabled=false;
+            btnConfirmSubscription.disabled=false;
+            btnConfirmSubscription.dataset.actionToTake='first_time';
+        }else if(clientData.state==='activo'){
+            selectClientEntry.disabled=false;
+            selectTypeMembership.disabled=false;
+            btnChangeMembershipType.disabled=false;
+            btnRenovate.disabled=false;
+            btnDisableMembership.disabled=false;
+            btnConfirmSubscription.disabled=false;
+        }
+    }
+    const cancelCurrentMembership=async()=>{
+        const memberships=await getMembershipHistory(clientId);
+        const lastMembershipId=memberships[0].id_membership;
+        const isCanceled=await cancelMembership(lastMembershipId);
+        console.log(isCanceled)
+        if(isCanceled){
+            console.log('membership canceled')
+        }else{console.log('something went wrong')} 
+
+        loadMembershipHistory();
+    }
+    const renovateMembership=async()=>{
+        const memberships= await getMembershipHistory(clientId);;
+        const membership=memberships[0];
+        if(membership.state==='activo'|| membership.state==='por_expirar'){
+            const outputEndDate= document.querySelector('.membership_end_date');
+            const initDate= document.querySelector('.membership_init_date');
+            initDate.value=addDays(membership.end_date,1)
+            selectTypeMembership.value=membership.id_membership_type;
+            const formatedEndDate= formatDate(membership.end_date);
+            const duration = parseInt(await getMembershipDuration());
+            const daysRemaining=getDaysRemainingMembership(formatedEndDate);
+            const endDate=addDays(initDate.value, duration);
+            outputEndDate.innerHTML=endDate;
+        }else{
+            if(membership.state==='expirado'|| membership.state==='anulado'){
+                const initDate= document.querySelector('.membership_init_date');
+                const outputEndDate= document.querySelector('.membership_end_date');
+                selectTypeMembership.value=membership.id_membership_type;
+                setCurrentDate();
+                const duration = parseInt(await getMembershipDuration());
+                const endDate= addDays(initDate.value, duration);
+                outputEndDate.innerHTML=endDate;
+
+            }
+        }
+    }
+
+    const changeANewMembership=async()=>{
+        const memberships= await getMembershipHistory(clientId);
+        selectClientEntry.disabled=false;
+        selectTypeMembership.disabled=false;
+        const lastMembership=memberships[0];
+        if(lastMembership.state==='activo'|| lastMembership.state==='por_expirar'){
+            const outputEndDate= document.querySelector('.membership_end_date');
+            const initDate= document.querySelector('.membership_init_date');
+            const formatedEndDate= formatDate(lastMembership.end_date);
+            const daysRemaining=getDaysRemainingMembership(formatedEndDate);
+            const duration = parseInt(await getMembershipDuration());
+            const finalDuration = daysRemaining+ duration;
+            const endDate=addDays(initDate.value, finalDuration);
+            outputEndDate.innerHTML=endDate;
+        }else{
+            if(lastMembership.state==='expirado'|| lastMembership.state==='anulado'){
+                const initDate= document.querySelector('.membership_init_date');
+                const outputEndDate= document.querySelector('.membership_end_date');
+                const duration = parseInt(await getMembershipDuration());
+                const endDate= addDays(initDate.value, duration);
+                outputEndDate.innerHTML=endDate;
+            }
+        }
+    }
+
+
+    
+    
+
+    const loadClientData=async()=>{
+        const clientData= await getClientByMembershipState(clientId);
+        const membership= await getMembershipHistory(clientId);
+        const pClientContainer= document.querySelector('.client_data_container');
+        const setClientData =`<p class="client_data name"><strong class="text_data_client">Cliente:</strong> ${clientData.name}</p>
+                              <p class="client_data email"><strong class="text_data_client">Correo:</strong> ${clientData.email}</p>
+                              <p class="client_data ci"><strong class="text_data_client">CI:</strong> ${clientData.ci}</p>`;
+        pClientContainer.innerHTML=setClientData;
+        if(!membership[0] || clientData.state==='sin membresía' || clientData.state==='anulado' ){
+            const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
+            const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
+                                     <p class="current_membership_data "><strong>-------------</strong></p>
+                                     <p class="current_membership_data">------------</p>`
+            pMembershipDataContainer.innerHTML=setMembershipData;
+        }else{
+            if(membership[0].state==='activo' || membership[0].state==='por_expirar' ){
+            const formatedEndDate=formatDate(membership[0].end_date)
+            const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
+            const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
+                                     <p class="current_membership_data "><strong>${membership[0].name}</strong></p>
+                                     <p class="current_membership_data$">Renueva en ${getDaysRemainingMembership(formatedEndDate)} días</p>`
+            pMembershipDataContainer.innerHTML=setMembershipData;
+            }else{
+                if(membership[0].state==='expirado'){
+                    const formatedEndDate=formatDate(membership[0].end_date)
+                    const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
+                    const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
+                                            <p class="current_membership_data "><strong>${membership[0].name}</strong></p>
+                                            <p class="current_membership_data$">Membresía Expirada</p>`
+                    pMembershipDataContainer.innerHTML=setMembershipData
+                }else {
+                    if(membership[0].state==='pendiente'){
+                        const formatedEndDate=formatDate(membership[1].end_date)
+                        const pMembershipDataContainer = document.querySelector('.current_membership_data_container');
+                        const setMembershipData=`<p class="current_membership_data"><Strong>Membresía Actual</Strong></p>
+                                                <p class="current_membership_data "><strong>${membership[1].name}</strong></p>
+                                                <p class="current_membership_data$">Renueva en ${getDaysRemainingMembership(formatedEndDate)}</p>`
+                        pMembershipDataContainer.innerHTML=setMembershipData
+                    }
+                }
+
+            } 
+        }
+        
+        
+    }
+
+
+    const loadMembershipHistory=async()=>{
+        const tBodyContainer = document.querySelector('.tbody_container');
+        const memberships= await getMembershipHistory(clientId);
+        tBodyContainer.innerHTML = "";
+        if(!memberships[0]){
+            tBodyContainer.innerHTML = "";
+        }else{
+            for (let i = 0; i < memberships.length; i++) {
+                const trContainer = document.createElement("tr");
+                trContainer.classList.add("data-row");
+                const tMembershipName=` <td class='cell_data'>
+                                            <div class="cell_with_dot">
+                                                <span class="state_dot ${memberships[i].state}"></span>
+                                                ${memberships[i].name}
+                                            </div>
+                                        </td>`
+                trContainer.innerHTML=tMembershipName;
+
+                const tdInitDate=document.createElement('TD');
+                tdInitDate.classList.add('cell_data');
+                tdInitDate.innerHTML=formatDate(memberships[i].init_date);
+                trContainer.append(tdInitDate);
+
+                const tdEndDate=document.createElement('TD');
+                tdEndDate.classList.add('cell_data');
+                tdEndDate.innerHTML=formatDate(memberships[i].end_date);
+                trContainer.append(tdEndDate);
+
+
+                const tdMembershipStatus=document.createElement('TD');
+                tdMembershipStatus.classList.add('cell_data');
+                const stateMembership= document.createElement('div');
+                stateMembership.classList.add('state_membership');
+                stateMembership.innerHTML=memberships[i].state;
+                const newElement=changeRowStyle(stateMembership,memberships[i].state);
+                tdMembershipStatus.append(newElement);
+                trContainer.append(tdMembershipStatus)
+                
+                tBodyContainer.append(trContainer);
+            }
+        }
+    }
+
+
+    const changeRowStyle=(element,state)=>{
+        if(state==='expirado'){
+            element.style.backgroundColor='Grey';
+            element.style.opacity=0.5;
+        }else if(state==='pendiente'){
+            element.style.backgroundColor='orange';
+        }
+        if(state==='anulado'){
+            element.style.backgroundColor='Grey';
+            element.style.opacity=0.5;
+        }
+
+
+        return element;
+    }
+
+    const getMembershipDuration=async()=>{
+        const selectField= document.querySelector('.select_type_membership');
+        const idSelect=parseInt(selectField.value);
+        const membershipTypes= await getActiveMembershipTypes();
+        for (let i = 0; i < membershipTypes.length; i++) {
+           if(membershipTypes[i].id_membership_type===idSelect){
+                return membershipTypes[i].duration;
+           }
+           
+        }
+    }
+
+    const getDaysOfMonth =(year, month)=>{
+        let daysOfMonth= new Date(year,month,0).getUTCDate();
+        return daysOfMonth;
+    }
+
+    const getDaysRemainingMembership=(date)=>{
+        const [year, month, day] = date.split('-').map(Number)
+        const endUTC = Date.UTC(year, month - 1, day)
+        const currentDate= new Date();
+        const currentDateUTC= Date.UTC(
+            currentDate.getUTCFullYear(),
+            currentDate.getUTCMonth(),
+            currentDate.getUTCDate()
+        )
+        const daysRemaining=endUTC-currentDateUTC;
+        const dias = Math.ceil(daysRemaining / (1000 * 60 * 60 * 24));
+        return dias;
+    }
+
+    
+    const formatDate =(date)=>{
+        let currentDate=new Date(date);
+        let [day, month, year]=[currentDate.getUTCDate(), currentDate.getUTCMonth()+1, currentDate.getUTCFullYear()];
+        if(day<10)day='0'+day;
+        if(month<10)month='0'+month;
+        const currentFormatedDate =`${year}-${month}-${day}`;
+        return currentFormatedDate;
     }
     
-    return (formatedDate = `${day}/${month}/${year}`);
-  };
-
-  const addDays = (initDate, days) => {
-    const finalDate = parseInputDate(initDate);
-    finalDate.setDate(finalDate.getDate() + days);
-    let dayEndDate = finalDate.getDate();
-    let monthEndDate = finalDate.getMonth() + 1;
-    const yearEndDate = finalDate.getFullYear();
-    if(dayEndDate<10){
-      dayEndDate='0'+dayEndDate;
-    }
-    if(monthEndDate<10){
-      monthEndDate='0'+monthEndDate;
-    }
-    endDate = `${yearEndDate}-${monthEndDate}-${dayEndDate}`;
-    return formatDate(finalDate);
-  };
-
-  const displayMembershipData = () => {
-    const optionSelected = parseInt(selectMem.value);
-    const membershipData = selectedMembershipData(optionSelected);
-    console.log(membershipData)
-    const pPrice = document.querySelector(".price_data");
-    const pDuration = document.querySelector(".duration_data");
-    const pInitDate = document.querySelector(".initDate_data");
-    const pEndDate = document.querySelector(".endDate_data");
-
-    const entryDate = selectClientEntry.value;
-
-    const initialDate = parseInputDate(entryDate);
-    const initialDateFormated = formatDate(initialDate);
-    const duration = parseInt(membershipData._duration);
-    const getFinalDate = addDays(entryDate, duration);
-     pPrice.innerHTML = `<strong class="desc_membership_data">Precio:</strong>${membershipData._price} bs`;
-     pDuration.innerHTML = `<strong class="desc_membership_data">Duracion:</strong>${membershipData._duration} dias`;
-     pInitDate.innerHTML = `<strong class="desc_membership_data">Fecha Inicio:</strong>${initialDateFormated}`;
-     pEndDate.innerHTML = `<strong class="desc_membership_data">Fecha Fin:</strong>${getFinalDate}`;
-  };
-
-  const submitMembership = () => {
-    const alertDialog = document.getElementById("alert-dialog");
-    let checkForm = alertDialog.dataset.checkForm;
-
-    if (checkForm) {
-      let newMembership = new Membership();
-      newMembership._idClient = document.getElementById("client").value;
-      newMembership._idMembershipType =parseInt(document.getElementById("membershipType").value);
-      newMembership._initDate =document.getElementById("dateClientEntry").value;
-      newMembership._endDate = endDate;
-      let membershipList = JSON.parse(localStorage.getItem("membershipList")) || [];
-      membershipList.push(newMembership);
-      localStorage.setItem("membershipList", JSON.stringify(membershipList));
-      alertDialog.close();
-      const toastNotification = showToast(checkForm);
-      toastContainer.innerHTML = toastNotification;
-      setTimeout(() => {
-        removeToast();
-      }, 3000);
-    } else {
-      const toastNotification = showToast(checkForm);
-      toastContainer.innerHTML = toastNotification;
-      
-    }
-    toastContainer.addEventListener("click", () => removeToast());
-
-  };
-  const validateField = (field, id) => {
-    let isValid = false;
-    const inputError = document.getElementById(`${id}_error`);
-    let clearField = field.value.trim();
-
-    if (id && id === "client") {
-      if (clearField !== "client0") {
-        field.classList.add("valid");
-        field.classList.remove("error");
-        inputError.classList.remove("show");
-        isValid = true;
-      } else {
-        field.classList.add("error");
-        field.classList.remove("valid");
-        inputError.classList.add("show");
-        inputError.textContent = "Asigne un cliente";
-        isValid = false;
-      }
-    }
-    if (id && id === "membershipType") {
-      if (clearField !== "memType0") {
-        field.classList.add("valid");
-        field.classList.remove("error");
-        inputError.classList.remove("show");
-        isValid = true;
-      } else {
-        field.classList.add("error");
-        field.classList.remove("valid");
-        inputError.classList.add("show");
-        inputError.textContent = "Asigne una membresia";
-        isValid = false;
-      }
-    }
-    if (id && id === "dateClientEntry") {
-      if (clearField) {
-        field.classList.add("valid");
-        field.classList.remove("error");
-        inputError.classList.remove("show");
-        isValid = true;
-      } else {
-        field.classList.add("error");
-        field.classList.remove("valid");
-        inputError.classList.add("show");
-        inputError.textContent = "Asignar Fecha de inicio ";
-        isValid = false;
-      }
-    }
-    return isValid;
-  };
-  const submitChecked=()=>{
-    const alertDialog = document.getElementById("alert-dialog");
-    let checkForm = false;
-    let checks = [];
-    allInput.forEach((field) => {
-      const isValid = validateField(field, field.id);
-      if (!isValid) {
-        checks.push(false);
-      } else {
-        checks.push(true);
-      }
-    });
-    checkForm = checks.every((check) => check === true);
     
-    if (checkForm) {
-      alertDialog.dataset.checkForm = checkForm;
-      console.log(alertDialog.dataset.checkForm)
-      alertDialog.show();
+
+    const submitChecked=()=>{
+        const alertDialog = document.getElementById("alert-dialog");
+        let checkForm = false;
+        let checks = [];
+        allInput.forEach((field) => {
+        const isValid = validateField(field, field.id);
+        if (!isValid) {
+            checks.push(false);
+        } else {
+            checks.push(true);
+        }
+        });
+        checkForm = checks.every((check) => check === true);
+        if (checkForm) {
+            alertDialog.dataset.checkForm = checkForm;
+            alertDialog.show();
+        }
     }
-  }
-  selectClientEntry.addEventListener("change", (e) => {
-    e.preventDefault();
 
-    displayMembershipData();
-  });
+    const setCurrentDate=()=>{
+        let newDate= new Date();
+        const initDate= document.querySelector('.membership_init_date');
+        let endDate= document.querySelector('.membership_end_date');
+        let [day,month,year]=[newDate.getDate(), newDate.getMonth() +1, newDate.getFullYear()];
+        
+        if(day<10)day='0'+day;
+        if(month<10)month='0'+month;
+        const newDateFormated= `${year}-${month}-${day}`;
+        endDate.textContent="-------------";
+        initDate.value=newDateFormated;
+    }
 
-  selectMem.addEventListener("change", (e) => {
-    e.preventDefault();
-  });
+    const addDays=(initDate, duration)=>{
+        let finalDate="";
+        let initDateData=new Date(initDate);
+        let currentYear=initDateData.getUTCFullYear();
+        let currentMonth=initDateData.getUTCMonth()+1;
+        let currentDaysOfMonth= getDaysOfMonth(currentYear, currentMonth);
+        let currentDayOfMonth = initDateData.getUTCDate()
+        let daysAvailableCurrentMonth=0;
+        let endDay="";
+        let endYear="";
+        let endMonth="";
+        
+        while(duration>0){
+            daysAvailableCurrentMonth=currentDaysOfMonth-currentDayOfMonth;
+            if(daysAvailableCurrentMonth>=duration){
+                endDay= currentDayOfMonth+duration;
+                duration=0;
+                endYear=currentYear;
+                endMonth=currentMonth;
+                finalDate=`${endYear}-${endMonth}-${endDay}`;
+            }
+            else{
+                if(currentMonth===12){
+                    duration=duration-daysAvailableCurrentMonth;
+                    currentYear=currentYear+1;
+                    currentMonth=1;
+                    currentDayOfMonth=0;
+                    currentDaysOfMonth=getDaysOfMonth(currentYear, currentMonth); 
+                }else{
+                    if(daysAvailableCurrentMonth===0){
+                        currentMonth=currentMonth+1;
+                        currentDaysOfMonth=getDaysOfMonth(currentYear, currentMonth);
+                        currentDayOfMonth=0;
+                        
+                    }else{
+                        duration=duration-daysAvailableCurrentMonth;
+                        currentMonth=currentMonth+1;
+                        currentDayOfMonth=0;
+                        currentDaysOfMonth=getDaysOfMonth(currentYear, currentMonth);
+                        finalDate=`${endYear}-${endMonth}-${endDay}`; 
+                    }
+                    
+                }
+            }
+        }
+        const finalFormatedDate=formatDate(finalDate);
+        return finalFormatedDate;
+    }
 
-  btnSubmit.addEventListener("click", () => {
-    submitChecked();
-    
-  });
-  newBtnSubmitModal.addEventListener("click", (e) => {
-    e.preventDefault();
-    submitMembership();
-  });
-  btnCancel.addEventListener("click", () => {
-    window.history.pushState({}, "", "/app");
-  
-  });
-  btnModalCancel.addEventListener("click", () => {
-    let alertDialog= document.getElementById('alert-dialog');
-    alertDialog.close();
-  
-  });
+    const processMembershipDate=async()=>{
+        const memberships= await getMembershipHistory(clientId);
+        const lastMembership=memberships[0] || [];
+        if(Array.isArray(lastMembership) || lastMembership.state==='sin membresia' ){
+            const initDateValue = document.querySelector('.membership_init_date').value;
+            const outputEndDate= document.querySelector('.membership_end_date');
+            const duration = await getMembershipDuration();
+            const endDate=addDays(initDateValue, duration);
+            outputEndDate.innerHTML=endDate;
+        }
+    }
 
-  validateDate();
-  loadMembershipTypeList();
-  loadClientList();
+    const registMembership=async()=>{
+        const lastMembership= await getMembershipHistory(clientId);
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        const actionToTake=containerMembershipData.dataset.actionToTake;
+        let state="";
+        if(Array.isArray(lastMembership)  || lastMembership[0].state==='sin membresia'){
+            state='activo'
+        }else {
+            if(lastMembership[0].state==='activo' && actionToTake ==='renovate')state="pendiente";
+            if(lastMembership[0].state==='expirado' && actionToTake ==='renovate')state="activo";
+            if(lastMembership[0].state==='activo' && actionToTake ==='change_membership')state="activo";
+            if(lastMembership[0].state==='expirado' && actionToTake ==='change_membership')state="activo";
+        };
+        
+        const alertDialog = document.getElementById("alert-dialog");
+        let checkForm = alertDialog.dataset.checkForm;
+        if(checkForm){
+            const idMembershipType= document.querySelector('.select_type_membership').value;
+            const initDate= document.querySelector('.membership_init_date').value;
+            const endDate = document.querySelector('.membership_end_date').textContent;
+            const idClient = clientId;
+            let createdMembership={};
+            let newMembership= new Membership(
+                initDate,
+                endDate,
+                state,
+                idMembershipType,
+                idClient
+            );
+            if(actionToTake==='change_membership'){
+                createdMembership = await changeMembership(lastMembership[0].id_membership,newMembership);
+            }else createdMembership= await createMembership(newMembership);
+            
+            if(createdMembership){
+                console.log("se registro membresía con exito");
+                alertDialog.close();
+                
+                const toastNotification = showToast(checkForm);
+                toastContainer.innerHTML = toastNotification;
+                setTimeout(() => {
+                removeToast();
+                }, 3000);
+            }else{
+                const toastNotification = showToast(false);
+                toastContainer.innerHTML = toastNotification;
+            }
+        } else {
+            const toastNotification = showToast(false);
+            toastContainer.innerHTML = toastNotification;
+        }
+        loadClientData();
+        loadMembershipHistory();
+        
+        toastContainer.addEventListener("click", () => removeToast())
+    }
+
+
+    const validateField = (field, id) => {
+        let isValid = false;
+        const inputError = document.getElementById(`${id}_error`);
+        let clearField = field.value.trim();
+
+        if (id && id === "membership_type") {
+            if (clearField !== "memType0") {
+                field.classList.add("valid");
+                field.classList.remove("error");
+                inputError.classList.remove("show");
+                isValid = true;
+            } else {
+                field.classList.add("error");
+                field.classList.remove("valid");
+                inputError.classList.add("show");
+                inputError.textContent = "Elija una opción";
+                isValid = false;
+            }
+        }
+
+        if (id && id === "init_date") {
+            if (clearField !== "") {
+                field.classList.add("valid");
+                field.classList.remove("error");
+                inputError.classList.remove("show");
+                isValid = true;
+            } else {
+                field.classList.add("error");
+                field.classList.remove("valid");
+                inputError.classList.add("show");
+                inputError.textContent = "Elija una fecha";
+                isValid = false;
+            }
+        }
+
+        return isValid;
+    };
+    const validateDate = () => {
+        let newDate = "";
+        let actualDay = new Date().getDate();
+        let actualMonth = new Date().getMonth() + 1;
+        const actualYear = new Date().getFullYear();
+        if (actualMonth < 10)actualMonth = "0" + actualMonth;
+        if (actualDay < 10)actualDay = "0" + actualDay;
+        newDate = `${actualYear}-${actualMonth}-${actualDay}`;
+        selectClientEntry.setAttribute("min", newDate);
+    };
+
+    selectTypeMembership.addEventListener('change', (e)=>{
+        e.preventDefault();
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        const actionToTake = containerMembershipData.dataset.actionToTake;
+        if(actionToTake==='first_time'){
+            processMembershipDate();
+        }
+        if(actionToTake==='renovate'){
+            renovateMembership();
+        }
+        if (actionToTake==='change_membership') {
+            changeANewMembership();
+        }
+    })
+
+    selectClientEntry.addEventListener('change', (e)=>{
+        e.preventDefault()
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        const actionToTake = containerMembershipData.dataset.actionToTake;
+        if(actionToTake==='first_time'){
+            processMembershipDate();
+        }
+        if(actionToTake==='renovate'){
+            renovateMembership();
+        }
+        if (actionToTake==='change_membership') {
+            changeANewMembership();
+            
+        }
+    })
+
+    btnFirstTime.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        containerMembershipData.dataset.actionToTake='first_time';
+        enableOptions();
+    })
+
+    btnRenovate.addEventListener('click',(e)=>{
+        e.preventDefault();
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        containerMembershipData.dataset.actionToTake='renovate';
+        selectClientEntry.disabled=true;
+        selectTypeMembership.disabled=true;
+        renovateMembership();
+    })
+
+    btnChangeMembershipType.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const containerMembershipData= document.querySelector('.container_membership_data');
+        containerMembershipData.dataset.actionToTake='change_membership';
+        selectClientEntry.disabled=false;
+        selectTypeMembership.disabled=false;
+        setCurrentDate();
+    })
+
+    btnConfirmSubscription.addEventListener('click', (e)=>{
+        e.preventDefault();
+        submitChecked();
+    })
+
+    newBtnSubmitModal.addEventListener('click', (e)=>{
+        e.preventDefault();
+        registMembership();
+    })
+
+    btnCloseModal.addEventListener("click", (e)=>{
+        e.preventDefault();
+        const alertDialog= document.getElementById('alert-dialog');
+        alertDialog.close();
+    })
+
+    btnDisableMembership.addEventListener('click', (e)=>{
+        e.preventDefault()
+        cancelCurrentMembership();
+    })
+
+    loadMembershipHistory()
+    disableOptions();
+    setCurrentDate();
+    loadClientData();
+    validateDate();
+    loadTypeMemberships();
+    loadLastMembership();
 }
 initMembership();

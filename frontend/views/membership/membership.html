@@ -1,46 +1,82 @@
 
     <form class="form" id="form_membership">
-      <h2>REGISTRAR MEMBRESÍA</h2>
+      <h2>GESTIONAR MEMBRESÍA</h2>
       <div class="input_data_container_membership">
-        <!---Client List -->
-        <div class="input_container_membership">
-          <label for="client" class="field_name">Cliente</label>
-          <select class="field_data membershipType" name="client" id="client"></select>
-          <p class="error" id="client_error"></p>
+        <div class="card_client_container">
+          <div class="client_photo"> 
+            AQUI VA LA FOTO
+          </div>
+          <div class="client_data_container">
+            
+          </div>
+          <div class="current_membership_data_container"></div>
         </div>
-        <!---Membership Type -->
-        <div class="input_container_membership">
-          <label for="membershipType" class="field_name">Tipo de Membresia</label>
-          <select class="field_data membershipType" name="memberType" id="membershipType"></select>
-          <p class="error" id="membershipType_error"></p>
+
+        <div class="card_membership_data_container">
+          <div class="container_membership_data">
+            <p class="membership_title">Datos membresía</p>
+            <div class="action_container">
+              <div class="membership_field_container plan_field">
+                <label class="membership_label" for="membership_type">Seleccionar plan</label>
+                <select class="field_data select_type_membership" name="mebership_types" id="membership_type">
+                  <option value="memType0" class="options">Elegir plan</option>
+                </select>
+                <p class="error" id="membership_type_error"></p>
+              </div>
+
+              <div class="membership_field_container regist_type_field">
+                  <label class="membership_label" for="membership_type">Tipo de Registro</label>
+                <div class="button_option_container">
+                  <button class="btn_option first_time">Primera vez</button>
+                  <button class="btn_option renovate">Renovación</button>
+                  <button class="btn_option change_plan">Cambiar Plan</button>
+                </div>
+              </div>
+              <div class="membership_field_container init_date_field">
+                <label class="membership_label" for="membership_type">Fecha Inicio</label>
+                <input class="field_data membership_init_date" type="date" id="init_date">
+                <p class="error" id="init_date_error"></p>
+              </div>
+              <div class="membership_field_container end_date_field">
+                <label class="membership_label" for="membership_type">Fecha Fin</label>
+                <p class="membership_end_date"></p>
+              </div>
+            </div>
+            <button class="confirm_subscription"><strong>CONFIRMAR INSCRIPCIÓN</strong></button>
+          </div>
+          <div class="disable_membership_container">
+            <p class="disable_title">Aréa de Terminación</p>
+            <p class="disable_description">Al anular la membresía todos los accesos y beneficios concedios por la misma serán revocados.</p>
+            <button class="disable_button">Anular Membresía</button>
+          </div>
         </div>
-        <!---Init Date-->
-        <div class="input_container_membership">
-          <label for="dateClientEntry" class="field_name">Fecha de ingreso</label>
-          <input type="date" class="field_data membershipType" id="dateClientEntry""/>
-          <p class="error" id="dateClientEntry_error"></p>
+
+        <div class="history_table_container">
+          <table class="history_table">
+            <caption class="table_title"><strong>HISTORIAL DE MEBRESÍAS</strong></caption>
+            <thead class="thead_history">
+              <tr class="history_header" >
+                <th class="history_data">NOMBRE PLAN</th>
+                <th class="history_data">FECHA INICIO</th>
+                <th class="history_data">FECHA FIN</th>
+                <th class="history_data">ESTADO</th>
+              </tr>
+            </thead>
+          <tbody class="tbody_container">
+          </tbody>
+          </table>
+          
         </div>
-        
-        <!---Membership Data -->
-        <div class="data_container">
-          <p class="membership_data price_data"></p>
-          <p class="membership_data duration_data"></p>
-          <p class="membership_data initDate_data"></p>
-          <p class="membership_data endDate_data"></p>
+
+       <div class="dialog-container">
+          <dialog id="alert-dialog">
+            <h3>Confirmar Registro</h3>
+            <div class="button_container_modal">
+              <button type="button" id="close_modal" class="btn_submit_modal cancel">Cerrar</button>
+              <button id="modal_submit" class="btn_submit_modal confirm">Confirmar</button>
+            </div>
+         </dialog>
         </div>
-      <!--Button group-->
-      <div class="dialog-container">
-        <dialog id="alert-dialog">
-        <h3>Confirmar Registro</h3>
-        <div class="button_container_modal">
-          <button type="button" id="close_modal" class="btn_submit_modal cancel">Cerrar</button>
-          <button id="modal_submit" class="btn_submit_modal confirm">Confirmar</button>
-        </div>
-      </dialog>
       </div>
       <div class="toast_container"></div>
-      <div class="button_container">
-        <button type="button" class="btn_form btn_cancel">Cancelar</button>
-        <button type="button" class="btn_form btn_submit">Añadir</button>
-      </div>
     </form>

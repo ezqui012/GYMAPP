@@ -1,5 +1,28 @@
 import * as clientModel from './client.model.js'
 
+
+
+
+export const getClientsByMembershipState=async()=>{
+    const data = await clientModel.getClientsByMembershipState();
+    if(!data){
+        const error = new Error('Data does not exist');
+        error.status = 404
+        throw error;
+    }
+    return data;
+}
+
+export const getClientByMembershipState=async(id)=>{
+    const data = await clientModel.getAClientByMembershipState(id);
+    if(!data){
+        const error = new Error('Data does not exist');
+        error.status = 404
+        throw error;
+    }
+    return data;
+}
+
 export const getAllClients=async()=>{
     return await clientModel.getClients();
 }
