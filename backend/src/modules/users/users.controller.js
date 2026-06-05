@@ -23,7 +23,6 @@ export const getUser=async(req, res)=>{
 export const registUser=async(req, res)=>{
     try {
         const {email,password, id_role}=req.body;
-        console.log({email,password, id_role})
         const registeredUser= await userService.createAUser({email,password, id_role});
         res.status(201).json(registeredUser);
     } catch (error) {

@@ -3,14 +3,14 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { SECRET_JWT_KEY } from '../../config/config.js';
 
-export const logUser= async({name, password, email})=>{
-    Validation.name(name);
+export const logUser= async({email, password})=>{
     Validation.password(password);
 
-    const userData= await authModel.findUser({name, email});
+    const userData= await authModel.findUserByEmail({email});
 
     if(!userData)throw new Error("user does not exist");
     const isValid= await bcrypt.compare(password, userData.password);
+    
     if(!isValid)throw new Error("invalid credentials");
     
     const token =jwt.sign(

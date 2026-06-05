@@ -97,6 +97,6 @@ export const findEmployeeByEmail=async(email)=>{
 }
 
 export const findEmployeeById=async(id)=>{
-    const employee= await pool.query('SELECT e.id_employee from employee e WHERE e.id_employee=$1 RETURNING *', [id])
+    const employee= await pool.query('SELECT e.id_employee from employee e WHERE e.id_employee=$1', [id])
     return employee.rows[0];
 }
