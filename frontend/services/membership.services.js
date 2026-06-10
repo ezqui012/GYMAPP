@@ -33,7 +33,7 @@ export const createMembership=async(membership)=>{
 
 export const cancelMembership = async(id)=>{
     try {
-        const response = await fetch(`${API_URL}/cancelMembership/${id}`, {
+        const response = await fetch(`${API_URL}/api/auth/cancelMembership/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export const cancelMembership = async(id)=>{
 
 export const changeMembership=async(id_membership,membership)=>{
     try {
-        const response = await fetch(`${API_URL}/changeMembership`,{
+        const response = await fetch(`${API_URL}/api/auth/changeMembership`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

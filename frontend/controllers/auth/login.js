@@ -22,7 +22,7 @@ export async function initLogin(){
 
     const loginService=async(email, password)=>{
         try {
-            const response = await fetch(`${API_URL}/logUser`, {
+            const response = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers:{
                     'Content-Type': 'application/json'

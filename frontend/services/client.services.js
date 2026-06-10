@@ -5,7 +5,7 @@ const API_URL="http://localhost:8500";
 
 export const getClientsByMebershipState=async()=>{
     try {
-        const response = await fetch(`${API_URL}/clientsByMembershipState`, {
+        const response = await fetch(`${API_URL}/api/auth/clientsByMembershipState`, {
             credentials: "include"
         })
         if(!response.ok)throw new Error(`Error Http ${response.status}`);
@@ -19,7 +19,7 @@ export const getClientsByMebershipState=async()=>{
 
 export const getClientByMembershipState=async(id)=>{
     try {
-        const response = await fetch(`${API_URL}/clientByMembershipState/${id}`,{
+        const response = await fetch(`${API_URL}/api/auth/clientByMembershipState/${id}`,{
             credentials:"include"
         })
         if(!response.ok)throw new Error(`Error Http ${response.status}`);
@@ -33,7 +33,7 @@ export const getClientByMembershipState=async(id)=>{
 export const getAllClients=async()=>{
     
     try {
-        const response=await fetch(`${API_URL}/clients`,{
+        const response=await fetch(`${API_URL}/api/auth/clients`,{
         credentials: 'include'
         });
 
@@ -50,7 +50,7 @@ export const getAllClients=async()=>{
 
 export const getInactiveClients =async()=>{
         try {
-            const response = await fetch(`${API_URL}/inactiveClients`, {
+            const response = await fetch(`${API_URL}/api/auth/inactiveClients`, {
                 credentials: "include"
             })
             const data = await response.json();
@@ -62,7 +62,7 @@ export const getInactiveClients =async()=>{
 
 export const getDeletedClients=async()=>{
     try {
-        const response = await fetch(`${API_URL}/getSoftDeletedClients`, {
+        const response = await fetch(`${API_URL}/api/auth/getSoftDeletedClients`, {
             credentials: "include"
         });
         const data = await response.json()
@@ -74,7 +74,7 @@ export const getDeletedClients=async()=>{
 
 export const getActiveClientsByActiveMembership=async()=>{
     try {
-        const response= await fetch(`${API_URL}/activeClients`, {
+        const response= await fetch(`${API_URL}/api/auth/activeClients`, {
             credentials: 'include'
         })
         if(!response.ok) throw new Error(`Error Http> ${response.status}`);
@@ -87,7 +87,7 @@ export const getActiveClientsByActiveMembership=async()=>{
 
 export const createClient=async(client)=>{
     try {
-        const response = await fetch(`${API_URL}/createClient`, {
+        const response = await fetch(`${API_URL}/api/auth/createClient`, {
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json'
@@ -107,7 +107,7 @@ export const createClient=async(client)=>{
 
 export const softDeleteClient=async(id)=>{
     try {
-        const response = await fetch(`${API_URL}/softDeleteClient/${id}`, {
+        const response = await fetch(`${API_URL}/api/auth/softDeleteClient/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'

@@ -2,7 +2,7 @@ const API_URL="http://localhost:8500";
 
 export const getActiveMembershipTypes =async ()=>{
     try {
-        const response = await fetch(`${API_URL}/activeMembershipTypes`, {
+        const response = await fetch(`${API_URL}/api/auth/activeMembershipTypes`, {
             credentials: "include"
         })
         if(!response.ok)throw new Error("Error fetching data");
@@ -17,7 +17,7 @@ export const getActiveMembershipTypes =async ()=>{
 
 export const getAMembershipType=async(id)=>{
     try {
-        const response = await fetch(`${API_URL}/getMembershipType/${id}`,{
+        const response = await fetch(`${API_URL}/api/auth/getMembershipType/${id}`,{
             credentials: "include"
         })
 
@@ -32,7 +32,7 @@ export const getAMembershipType=async(id)=>{
 
 export const createMembershipType=async(membershipType)=>{
     try {
-        const response = await fetch(`${API_URL}/createMembershipType`, {
+        const response = await fetch(`${API_URL}/api/auth/createMembershipType`, {
             method:'POST',
             headers:{
                 'Content-Type': 'application/json'
@@ -51,7 +51,7 @@ export const createMembershipType=async(membershipType)=>{
 
 export const updateMembershipType = async (id, membershipType)=>{
     try {
-        const response = await fetch(`${API_URL}/updateMembershipType/${id}`,{
+        const response = await fetch(`${API_URL}/api/auth/updateMembershipType/${id}`,{
             method: 'PUT',
             headers:{
                 'Content-Type': 'application/json'
@@ -70,7 +70,7 @@ export const updateMembershipType = async (id, membershipType)=>{
 
 export const disableMembershipType=async(id)=>{
     try {
-        const response = await fetch(`${API_URL}/disableMembershipType/${id}`,{
+        const response = await fetch(`${API_URL}/api/auth/disableMembershipType/${id}`,{
             method: 'DELETE',
             headers:{
                 'Content-Type': 'application/json'

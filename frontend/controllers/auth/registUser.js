@@ -38,7 +38,7 @@ export async function initRegistUser() {
                 const email=selectedOption.dataset.email;
                 const selectedRole = document.querySelector('#role').value;
                 const password=document.getElementById('password').value;
-                const response = await fetch('http://localhost:8500/registUser',{
+                const response = await fetch('http://localhost:8500/api/auth/registUser',{
                     method: 'POST',
                     headers:{'Content-Type': 'application/json'},
                     body: JSON.stringify({
