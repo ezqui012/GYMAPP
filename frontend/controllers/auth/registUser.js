@@ -1,4 +1,3 @@
-import { loadComponent } from "../../app/app.js";
 import {getEmployeEmails} from "../../services/employee.services.js";
 
 export async function initRegistUser() {
@@ -8,7 +7,6 @@ export async function initRegistUser() {
     const btnModalSubmit = document.getElementById('modal_submit');
     const btnCloseModal=document.getElementById('close_modal');
     const toastContainer=document.querySelector('.toast_container');
-
     const showToast=(checkform)=>{
     let message='';
     let option='';
@@ -189,11 +187,10 @@ export async function initRegistUser() {
 
     btnInitLog.addEventListener("click",(e)=>{
         e.preventDefault();
-        let route = btnInitLog.dataset.route;
-        if(route){
-            window.history.pushState({}, "", route);
-            loadComponent();  
-        }
+        console.log(3)
+        window.location.href='../../index.html'
     });
 
 }
+
+initRegistUser();

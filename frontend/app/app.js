@@ -1,10 +1,8 @@
 import { sidebar } from "../components/sidebar.js";
-
+//import { verifyAuth } from "../services/auth.services.js";
 const routes = {
   404: "pages/404",
-  "/app": "index.html",
-  "/login":"/../views/auth/login.html",
-  "/newUser": "../views/auth/registUser.html",
+  "/app": "/app/app.html",
   "/registEmployee": "../views/employee/registEmployee.html",
   "/registClient": "../views/clients/registClient.html",
   "/employeeList": "../views/employee/employeeList.html",
@@ -25,7 +23,7 @@ const loadComponent = async () => {
   const path = window.location.pathname;
   const newRoute = routes[path] || routes["/app"] || routes["/404"];
   const html = await fetch(newRoute).then((data) => data.text());
-  
+
   document.getElementById("main_content").innerHTML = html;
 
   const isAuthRoute = ["/login", "/newUser"].includes(path);
@@ -54,15 +52,28 @@ loadComponent();
 
 
 
+const initApp= async()=>{
+  try {
+  //     const isAuthRoute = ["/login", "/newUser"].includes(path)
 
+  // if(!isAuthRoute) {
+  //   const user = await verifyAuth();
+  //   console.log(user)
+  //   if(!user) return  
+  // }
+
+  
+  loadComponent()
+  } catch (error) {
+    console.log(error)
+  }
+  
+}
 
 function initView(path) {
   switch (path) {
-    case "/login":
-      import("/controllers/auth/login.js").then((mod) => mod.initLogin()).catch((err)=>console.log(err));
-      break;
-    case "/newUser":
-      import("/controllers/auth/registUser.js").then((mod) => mod.initRegistUser()).catch((err)=>console.log(err));
+    case "/app":
+      import("/app/app.js").then((mod) => mod.initApp()).catch((err)=>console.log(err));
       break;
     case "/clientList":
       import("/controllers/clients/clientList.js").then((mod) => mod.initClientList()).catch((err)=>console.log(err));
