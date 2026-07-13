@@ -11,7 +11,7 @@ import clientRoutes from './modules/clients/client.routes.js';
 import employeeRoutes from './modules/employees/employee.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import userRoutes from './modules/users/users.routes.js'
-import { methods as authorization } from "./modules/middlewares/auth.middleware.js";
+import { methods as authorization } from "./middlewares/auth.middleware.js";
 const app=express();
 const ACCEPTED_ORIGINS=[
     "http://localhost:3000",
@@ -40,11 +40,11 @@ app.use(morgan('dev'));
 
 app.use('/api/auth',authRoutes);
 
-app.use('/api/auth', authorization.isAdmin, membershipTypeRoutes);
-app.use('/api/auth', authorization.isAdmin, membershipRoutes);
-app.use('/api/auth', authorization.isAdmin, clientRoutes)
-app.use('/api/auth', authorization.isAdmin, employeeRoutes);
-app.use('/api/auth', authorization.isAdmin, userRoutes);
+app.use('/api/auth', membershipTypeRoutes);
+app.use('/api/auth', membershipRoutes);
+app.use('/api/auth', clientRoutes)
+app.use('/api/auth', employeeRoutes);
+app.use('/api/auth', userRoutes);
 
 
 

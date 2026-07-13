@@ -79,13 +79,13 @@ export const activeClients=async()=>{
 export const inactiveClients=async()=>{
     const clients = await pool.query(`SELECT DISTINCT c.id_client, p.name, p.lastname, p.ci, p.email from (person p inner join client c on p.id_person =c.id_client) 
                                     inner join membership m on m.id_client=c.id_client where m.state ='expirado' AND c.id_client NOT IN (
-                                    SELECT id_client FROM membership WHERE is_active = 'activo')`);
+                                    SELECT id_client FROM membership WHERE c.is_deleted=true)`);
     return clients.rows;
 }
 
 export const softDeletedClients=async()=>{
     const clients = await pool.query(`SELECT c.id_client, p.name, p.lastname, p.ci, p.nit, p.photo, p.email from person p inner join client c on p.id_person =c.id_client 
-                                     where c.is_deleted='activo'`);
+                                     where c.is_deleted=true`);
 
     return clients.rows;
 }

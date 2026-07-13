@@ -1,6 +1,21 @@
 import jwt from "jsonwebtoken";
-import { SECRET_JWT_KEY } from "../../config/config.js";
-import { getUser } from "../users/users.controller.js";
+import { SECRET_JWT_KEY } from "../config/config.js";
+import { getUser } from "../modules/users/users.controller.js";
+
+
+export const verifyAuth=async(req, res, next)=>{
+    const token =req.cookies.access_token;
+    if(!token) return res.status(401).json({message: 'NO authorized'});
+
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_JWT_KEY);
+        req.user= decoded;
+        next()
+    } catch (error) {
+        return res.status(401).json({message: 'Token invalido'})
+    }
+}
+
 function isAdmin(req,res, next){
     const logged= verifyCookie(req);
     if(logged) return next();
@@ -29,5 +44,6 @@ async function verifyCookie(req){
 
 export const methods={
     isAdmin,
-    isPublic
+    isPublic,
+    verifyAuth
 }
