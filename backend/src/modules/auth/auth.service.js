@@ -3,28 +3,43 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { SECRET_JWT_KEY } from '../../config/config.js';
 
-export const logUser= async({name, password, email})=>{
-    Validation.name(name);
+export const logUser= async({email, password})=>{
     Validation.password(password);
 
-    const userData= await authModel.findUser({name, email});
-
+    const userData= await authModel.findUserByEmail({email});
     if(!userData)throw new Error("user does not exist");
     const isValid= await bcrypt.compare(password, userData.password);
+    
     if(!isValid)throw new Error("invalid credentials");
     
     const token =jwt.sign(
-        { id: userData.id_user, username: userData.name,email: userData.email},
+        { id_user: userData.id_user, 
+          username: userData.name,
+          email: userData.email,
+          id_role: userData.id_role
+        },
         SECRET_JWT_KEY,
         {
             expiresIn: '1h'
         }
     );
-
-
-
+    
     return {userData, token};
 }
+
+// export const verifyAuth=async(email, password)=>{
+//     const userExist= await authModel.findUserByEmail(email);
+
+//     if(!userExist)throw new Error("User does not exist");
+
+//     const hashedPassword = await jwt.compare(password, userExist.password);
+
+//     if(hashedPassword)throw new Error("Incorrect credentials try again");
+
+    
+    
+    
+// }
 
 
 class Validation{

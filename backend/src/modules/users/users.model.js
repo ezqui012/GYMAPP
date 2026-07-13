@@ -14,8 +14,9 @@ export const getUsers=async()=>{
 
 export const getUserBydId=async(id)=>{
     const user= await pool.query(
-        `SELECT u.id_user, p.name, p.lastname, p.phone, p.email, p.nit  
-        FROM users u left join employee e left join person p ON p.id_person=e.id_employee ON e.id_employee=u.id_user where u.id_user= $1`, [id]);
+        `SELECT u.id_user, p.name, p.lastname, p.phone, p.email, p.nit, r.id_role  
+        FROM users u left join employee e left join person p ON p.id_person=e.id_employee ON e.id_employee=u.id_user left join "role" r on r.id_role = u.id_role
+         where u.id_user= $1`, [id]);
     return user.rows[0];
 }
 

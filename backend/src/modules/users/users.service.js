@@ -24,8 +24,9 @@ export const getUser=async(id)=>{
 export const createAUser=async({email, password,id_role})=>{
     const person = await personModel.getPersonByEmail(email);
     if(!person)throw new Error("Person does not exist, regist employee");
-
+    
     const employee = await employeeModel.findEmployeeById(person.id_person);
+    console.log(employee)
     if(!employee)throw new Error("Employee does not exist");
 
     const userExist= await userModel.getUserBydId(employee.id_employee);

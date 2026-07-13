@@ -32,10 +32,15 @@ export function sidebar() {
         btn.addEventListener('click',(e)=>{
             e.preventDefault()
             const route = btn.dataset.route;
-            if(route){
+            if(route==='/login'){
+                window.location.href='../index.html'
+            }else{
+                if(route){
                 window.history.pushState({}, "", route);
                 loadComponent();
             }
+            }
+            
         })
     })
 

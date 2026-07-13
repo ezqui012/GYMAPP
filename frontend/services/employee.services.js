@@ -3,7 +3,7 @@ const API_URL="http://localhost:8500";
 
 export const getEmployeEmails=async()=>{
         try {
-            const response= await fetch(`${API_URL}/employeEmailsWhitoutUser`, {
+            const response= await fetch(`${API_URL}/api/auth/employeEmailsWhitoutUser`, {
                 credentials: "include"
             })
             
@@ -18,7 +18,7 @@ export const getEmployeEmails=async()=>{
 
 export const getDataEmployees=async()=>{
     try {
-        const response = await fetch(`${API_URL}/employees`, {
+        const response = await fetch(`${API_URL}/api/auth/employees`, {
             credentials: "include"
         });
         if(!response.ok) throw new Error(`Error Http ${response.status}`);
@@ -33,7 +33,7 @@ export const getDataEmployees=async()=>{
 
 export const getAEmployee=async(id)=>{
     try {
-        const response= await fetch(`${API_URL}/employee/${id}`, {
+        const response= await fetch(`${API_URL}/api/auth/employee/${id}`, {
             credentials: "include"
         });
         
@@ -48,7 +48,7 @@ export const getAEmployee=async(id)=>{
 
 export const registEmployee=async(employee)=>{
     try {
-        const response = await fetch(`${API_URL}/createEmployee`,{
+        const response = await fetch(`${API_URL}/api/auth/createEmployee`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -69,7 +69,7 @@ export const registEmployee=async(employee)=>{
 
 export const updateEmployee=async(id, employeeData)=>{
     try {
-        const response= await fetch(`${API_URL}/updateEmployee/${id}`, {
+        const response= await fetch(`${API_URL}/api/auth/updateEmployee/${id}`, {
             method:'PUT',
             headers:{
                 'Content-Type': 'application/json'
@@ -89,7 +89,7 @@ export const updateEmployee=async(id, employeeData)=>{
 
 export const deleteEmployee=async(id)=>{
     try {
-        const response=await fetch(`${API_URL}/deleteEmployee/${id}`, {
+        const response=await fetch(`${API_URL}/api/auth/deleteEmployee/${id}`, {
             method: 'DELETE',
             headers:{
                 'Content-Type': 'application/json'
