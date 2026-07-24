@@ -2,11 +2,13 @@ const API_URL="http://localhost:8500";
 
 export const getMembershipHistory=async(id)=>{
     try {
-        const response= await fetch(`${API_URL}/membershipHistory/${id}`, {
+        const response= await fetch(`${API_URL}/api/auth/membershipHistory/${id}`, {
             credentials: "include"
         })
+        console.log(response)
         if(!response.ok)throw new Error(`Error Http ${response.status}`);
         const data=response.json();
+        
         return data;
     } catch (error) {
         console.error('Error http:', error)
@@ -14,7 +16,7 @@ export const getMembershipHistory=async(id)=>{
 }
 export const createMembership=async(membership)=>{
     try {
-        const response = await fetch(`${API_URL}/createMembership`, {
+        const response = await fetch(`${API_URL}/api/auth/createMembership`, {
             method: 'POST',
             headers:{
                 'Content-Type':'application/json'

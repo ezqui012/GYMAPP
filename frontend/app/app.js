@@ -1,5 +1,5 @@
 import { sidebar } from "../components/sidebar.js";
-//import { verifyAuth } from "../services/auth.services.js";
+import { verifyAuth } from "../services/auth.services.js";
 const routes = {
   404: "pages/404",
   "/app": "/app/app.html",
@@ -22,59 +22,33 @@ const routes = {
 const loadComponent = async () => {
   const path = window.location.pathname;
   const newRoute = routes[path] || routes["/app"] || routes["/404"];
+  if(!newRoute){
+     window.history.pushState({}, "", '/app')
+    loadComponent()
+    return
+  }
   const html = await fetch(newRoute).then((data) => data.text());
-
   document.getElementById("main_content").innerHTML = html;
-
-  const isAuthRoute = ["/login", "/newUser"].includes(path);
-  let sidebarEl = document.querySelector(".sidebar_container");
-
-   if (isAuthRoute) {
-        if (sidebarEl) sidebarEl.remove(); 
-    } else {
-        if (!sidebarEl) {
-            document.body.prepend(sidebar(loadComponent)); 
-        }
-    }
-  
   initView(path);
 };
 
 
-
+const initApp= async()=>{
+      const user = await verifyAuth();
+      if(!user) return;
+      const sidebarComponent = sidebar(user.id_role, loadComponent);
+      document.body.prepend(sidebarComponent)
+      await loadComponent()
+}
 window.addEventListener("DOMContentLoaded", () => {
-  loadComponent();
+  initApp();
 });
 window.addEventListener("popstate", () => {
   loadComponent();
 });
-loadComponent();
-
-
-
-const initApp= async()=>{
-  try {
-  //     const isAuthRoute = ["/login", "/newUser"].includes(path)
-
-  // if(!isAuthRoute) {
-  //   const user = await verifyAuth();
-  //   console.log(user)
-  //   if(!user) return  
-  // }
-
-  
-  loadComponent()
-  } catch (error) {
-    console.log(error)
-  }
-  
-}
 
 function initView(path) {
   switch (path) {
-    case "/app":
-      import("/app/app.js").then((mod) => mod.initApp()).catch((err)=>console.log(err));
-      break;
     case "/clientList":
       import("/controllers/clients/clientList.js").then((mod) => mod.initClientList()).catch((err)=>console.log(err));
       break;

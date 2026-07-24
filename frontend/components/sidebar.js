@@ -1,10 +1,11 @@
-import { loadComponent } from "../app/app.js";
-
-export function sidebar() {
+//import { loadComponent } from "../app/app.js";
+import { logoutService } from "../services/auth.services.js";
+export function sidebar(role, loadComponent) {
     const sidebar=document.createElement('DIV');
     sidebar.classList.add('sidebar_container'); 
     sidebar.setAttribute('id', 'sideB');
-    sidebar.innerHTML=`<h2 class="sidebar_title" >DETONADOR GYM</h2>
+    if(role===0){
+        sidebar.innerHTML=`<h2 class="sidebar_title" >DETONADOR GYM</h2>
             <button data-route="/app" class="btn"><b>Inicio</b></button>
             <button class="btn btn_main"><b>Membresias</b></button>
             <div class="btn_section">
@@ -22,17 +23,37 @@ export function sidebar() {
             <div class="btn_section">
                 <button data-route="/registEmployee" class="btn sub_btn"><b>Registrar Empleado</b></button>
                 <button data-route="/employeeList" class="btn sub_btn"><b>Ver Lista Empleados</b></button>
-            </div>
+                </div>
             <button data-route="/report"class="btn"><b>Informes</b></button>
-            <button data-route="/login"class="btn" onclick=""><b>Cerrar Sesión</b></button>`;
+            <button data-route="/logout"class="btn"><b>Cerrar Sesión</b></button>`;
+        }else if(role===1){
+                sidebar.innerHTML=`<h2 class="sidebar_title" >DETONADOR GYM</h2>
+                    <button data-route="/app" class="btn"><b>Inicio</b></button>
+                    <button class="btn btn_main"><b>Membresias</b></button>
+                    <div class="btn_section">
+                        <button data-route="/membership" class="btn sub_btn"><b>Membresía</b></button>
+                        <button data-route="/membershipList" class="btn sub_btn"><b>Lista de Membresias</b></button>
+                        <button data-route="/membershipType" class="btn sub_btn"><b>Tipo de Membresía</b></button>
+                        <button data-route="/membershipTypeList" class="btn sub_btn"><b>Lista de Tipos de Membresia</b></button>
+                    </div>
+                    <button class="btn btn_main"><b>Clientes</b></button>
+                    <div class="btn_section">
+                        <button data-route="/registClient" class="btn sub_btn"><b>Registrar Cliente</b></button>
+                        <button data-route="/clientList" class="btn sub_btn"><b>Ver Lista Clientes</b></button>
+                    </div>
+                    <button data-route="/report"class="btn"><b>Informes</b></button>
+                    <button data-route="/logout"class="btn"><b>Cerrar Sesión</b></button>`;
+        }
+    
 
 
     const navBtns= sidebar.querySelectorAll('[data-route]');
     navBtns.forEach(btn=>{
-        btn.addEventListener('click',(e)=>{
+        btn.addEventListener('click',async(e)=>{
             e.preventDefault()
             const route = btn.dataset.route;
-            if(route==='/login'){
+            if(route==='/logout'){
+                await logoutService();
                 window.location.href='../index.html'
             }else{
                 if(route){

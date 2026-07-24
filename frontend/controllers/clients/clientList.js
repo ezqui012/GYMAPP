@@ -86,7 +86,7 @@ export async function initClientList() {
         e.preventDefault();
         let id = e.currentTarget.dataset.index;
         window.history.pushState({}, "", `/editClient?id=${id}`);
-        loadComponent();
+        //loadComponent();
       });
     });
   };
@@ -186,7 +186,7 @@ export async function initClientList() {
 
   btnAddclient.addEventListener("click", () => {
     window.history.pushState({}, "", "/registClient");
-    loadComponent();
+    //loadComponent();
   });
 
   searchBar.addEventListener("keyup", () => {
