@@ -21,13 +21,13 @@ const routes = {
 
 const loadComponent = async () => {
   const path = window.location.pathname;
-  const newRoute = routes[path] || routes["/app"] || routes["/404"];
-  if(!newRoute){
+  //const newRoute = routes[path] || routes["/app"] || routes["/404"];
+  if(!routes[path]){
      window.history.pushState({}, "", '/app')
     loadComponent()
     return
   }
-  const html = await fetch(newRoute).then((data) => data.text());
+  const html = await fetch(routes[path]).then((data) => data.text());
   document.getElementById("main_content").innerHTML = html;
   initView(path);
 };
@@ -35,7 +35,10 @@ const loadComponent = async () => {
 
 const initApp= async()=>{
       const user = await verifyAuth();
-      if(!user) return;
+      if(!user){
+        window.location.href = '/index.html';
+        return;
+      } 
       const sidebarComponent = sidebar(user.id_role, loadComponent);
       document.body.prepend(sidebarComponent)
       await loadComponent()

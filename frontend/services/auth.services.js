@@ -33,7 +33,7 @@ export const logoutService=async()=>{
       return response.ok;
       
     } catch (error) {
-      console.log(error)
+      return null
     }
 }
 
@@ -42,15 +42,9 @@ export const verifyAuth =async()=>{
       const response = await fetch(`${API_URL}/api/auth/verify`, {
         credentials: "include"
       })
-      if(!response.ok){
-        window.location.href = '/index.html'
-        return null;
-      }
-
-      return response.json();
-      
+      if(!response.ok) return null
+      return  response.json();
     } catch (error) {
-      window.location.href = '/index.html'
         return null;
     }
 }
