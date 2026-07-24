@@ -30,7 +30,6 @@ export const getClientsByMembershipState=async()=>{
                                     GROUP BY c.id_client, p.name, p.lastname, p.ci, p.email
                                     ORDER BY p.name ASC`);
 
-        console.log(clients.rows)
 
         return clients.rows;
 }

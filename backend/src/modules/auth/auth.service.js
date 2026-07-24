@@ -27,19 +27,7 @@ export const logUser= async({email, password})=>{
     return {userData, token};
 }
 
-// export const verifyAuth=async(email, password)=>{
-//     const userExist= await authModel.findUserByEmail(email);
 
-//     if(!userExist)throw new Error("User does not exist");
-
-//     const hashedPassword = await jwt.compare(password, userExist.password);
-
-//     if(hashedPassword)throw new Error("Incorrect credentials try again");
-
-    
-    
-    
-// }
 
 
 class Validation{

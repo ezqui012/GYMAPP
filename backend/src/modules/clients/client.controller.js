@@ -70,7 +70,6 @@ export const getClients=async(req, res)=>{
 export const createClient=async(req,res)=>{
     try {
         const {name, lastname, phone, photo, ci, nit, email}=req.body;
-        console.log(req.body)
         const newClient= await clientService.createClient({name, lastname, phone, photo, ci, nit, email});
         
         res.status(201).json(newClient)

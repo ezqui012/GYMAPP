@@ -7,9 +7,7 @@ export const checkRole=(roles)=>async(req, res, next)=>{
         const token = req.cookies.access_token;
         const tokenData= jwt.verify(token, SECRET_JWT_KEY);
         if(!token)throw new Error("invalid token");
-        console.log(roles)
         const userData = await getUserBydId(tokenData.id_user);
-        console.log(userData)
         if([].concat(roles).includes(userData.id_role)){
             next();
         }else{

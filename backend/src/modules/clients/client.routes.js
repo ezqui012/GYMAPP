@@ -6,10 +6,10 @@ import { checkRole } from "../../middlewares/verifyRole.middleware.js";
 const router=Router();
 
 router.get('/clients', verifyAuth,checkRole([0]), getClients);
-router.get('/client/:id', getClient);
+router.get('/client/:id',verifyAuth, getClient);
 router.get('/activeClients', verifyAuth, getActiveClients);
 router.get('/getSoftDeletedClients',verifyAuth , getSoftDeletedClients);
-router.get('/inactiveClients' ,getInactiveClients);
+router.get('/inactiveClients', verifyAuth, getInactiveClients);
 router.get('/clientsByMembershipState', verifyAuth ,getClientsByMembershipState);
 router.get('/clientByMembershipState/:id', verifyAuth, getAClientByMembershipState)
 
