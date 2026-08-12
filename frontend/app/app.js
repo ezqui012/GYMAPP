@@ -1,8 +1,8 @@
 import { sidebar } from "../components/sidebar.js";
 import { verifyAuth } from "../services/auth.services.js";
 const routes = {
-  404: "pages/404",
-  "/app": "/app/app.html",
+  404: "../views/errors/404.html",
+  "/app": "../views/dashboard/dashboard.html",
   "/registEmployee": "../views/employee/registEmployee.html",
   "/registClient": "../views/clients/registClient.html",
   "/employeeList": "../views/employee/employeeList.html",
@@ -15,13 +15,11 @@ const routes = {
   "/editMembership": "../views/membership/editMembership.html",
   "/membershipType": "../views/membership/membershipType.html",
   "/editMembershipType": "../views/membership/editMembershipType.html",
-  "/membershipTypeList": "../views/membership/membershipTypeList.html",
-
+  "/membershipTypeList": "../views/membership/membershipTypeList.html"
 };
 
 const loadComponent = async () => {
   const path = window.location.pathname;
-  //const newRoute = routes[path] || routes["/app"] || routes["/404"];
   if(!routes[path]){
      window.history.pushState({}, "", '/app')
     loadComponent()
@@ -90,7 +88,10 @@ function initView(path) {
       break;
     case "/membershipTypeList":
       import("/controllers/membershipType/membershipTypeList.js").then((mod) => mod.initMembershipTypeList()).catch((err)=>console.log(err));
-      break;  
+      break;
+    case "/app":
+      import("/controllers/dashboard/admin.dashboard.js").then((mod) => mod.initAdminDashboard()).catch((err)=>console.log(err));
+      break;    
   }
 
 }

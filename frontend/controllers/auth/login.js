@@ -6,7 +6,7 @@ export async function initLogin(){
     const sessionExist=async()=>{
             const user = await verifyAuth();
             if(user){
-                window.location.href = '/app/app.html'
+                window.location.href = '/app'
                 return
             }
         }
@@ -20,7 +20,7 @@ export async function initLogin(){
             console.log('redirigiendo....')
             setTimeout(() => {
 
-                window.location.href='/app/app.html';
+                window.location.href='/app';
             }, 1000);
             
         }else{
