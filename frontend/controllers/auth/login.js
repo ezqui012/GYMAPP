@@ -1,7 +1,15 @@
 
 const API_URL="http://localhost:8500";
 import { loginService } from "../../services/auth.services.js";
+import { verifyAuth } from "../../services/auth.services.js";
 export async function initLogin(){
+    const sessionExist=async()=>{
+            const user = await verifyAuth();
+            if(user){
+                window.location.href = '/app'
+                return
+            }
+        }
     
     const login=async()=>{
         let userData=document.getElementById('user').value;
@@ -12,7 +20,7 @@ export async function initLogin(){
             console.log('redirigiendo....')
             setTimeout(() => {
 
-                window.location.href='/app/app.html';
+                window.location.href='/app';
             }, 1000);
             
         }else{
@@ -34,6 +42,7 @@ export async function initLogin(){
         
     
     });
+    sessionExist();
 }
 initLogin()
 

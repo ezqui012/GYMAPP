@@ -10,13 +10,18 @@ export const getMembership=async(id)=>{
 }
 
 export const getMembershipHistory=async(id)=>{
-    const memberships = await membershipModel.getMembershipHistory(id);
+    try {
+        const memberships = await membershipModel.getMembershipHistory(id);
     if(!memberships){
         const error = new Error('Data does not exist');
         error.status = 404
         throw error;
     }
     return memberships;
+    } catch (error) {
+        console.log(error)
+    }
+    
 }
 
 export const createMembership=async({init_date, end_date, state, id_membership_type, id_client})=>{

@@ -1,8 +1,8 @@
 import { sidebar } from "../components/sidebar.js";
-//import { verifyAuth } from "../services/auth.services.js";
+import { verifyAuth } from "../services/auth.services.js";
 const routes = {
-  404: "pages/404",
-  "/app": "/app/app.html",
+  404: "../views/errors/404.html",
+  "/app": "../views/dashboard/dashboard.html",
   "/registEmployee": "../views/employee/registEmployee.html",
   "/registClient": "../views/clients/registClient.html",
   "/employeeList": "../views/employee/employeeList.html",
@@ -15,66 +15,41 @@ const routes = {
   "/editMembership": "../views/membership/editMembership.html",
   "/membershipType": "../views/membership/membershipType.html",
   "/editMembershipType": "../views/membership/editMembershipType.html",
-  "/membershipTypeList": "../views/membership/membershipTypeList.html",
-
+  "/membershipTypeList": "../views/membership/membershipTypeList.html"
 };
 
 const loadComponent = async () => {
   const path = window.location.pathname;
-  const newRoute = routes[path] || routes["/app"] || routes["/404"];
-  const html = await fetch(newRoute).then((data) => data.text());
-
+  if(!routes[path]){
+     window.history.pushState({}, "", '/app')
+    loadComponent()
+    return
+  }
+  const html = await fetch(routes[path]).then((data) => data.text());
   document.getElementById("main_content").innerHTML = html;
-
-  const isAuthRoute = ["/login", "/newUser"].includes(path);
-  let sidebarEl = document.querySelector(".sidebar_container");
-
-   if (isAuthRoute) {
-        if (sidebarEl) sidebarEl.remove(); 
-    } else {
-        if (!sidebarEl) {
-            document.body.prepend(sidebar(loadComponent)); 
-        }
-    }
-  
   initView(path);
 };
 
 
-
+const initApp= async()=>{
+      const user = await verifyAuth();
+      if(!user){
+        window.location.href = '/index.html';
+        return;
+      } 
+      const sidebarComponent = sidebar(user.id_role, loadComponent);
+      document.body.prepend(sidebarComponent)
+      await loadComponent()
+}
 window.addEventListener("DOMContentLoaded", () => {
-  loadComponent();
+  initApp();
 });
 window.addEventListener("popstate", () => {
   loadComponent();
 });
-loadComponent();
-
-
-
-const initApp= async()=>{
-  try {
-  //     const isAuthRoute = ["/login", "/newUser"].includes(path)
-
-  // if(!isAuthRoute) {
-  //   const user = await verifyAuth();
-  //   console.log(user)
-  //   if(!user) return  
-  // }
-
-  
-  loadComponent()
-  } catch (error) {
-    console.log(error)
-  }
-  
-}
 
 function initView(path) {
   switch (path) {
-    case "/app":
-      import("/app/app.js").then((mod) => mod.initApp()).catch((err)=>console.log(err));
-      break;
     case "/clientList":
       import("/controllers/clients/clientList.js").then((mod) => mod.initClientList()).catch((err)=>console.log(err));
       break;
@@ -113,7 +88,10 @@ function initView(path) {
       break;
     case "/membershipTypeList":
       import("/controllers/membershipType/membershipTypeList.js").then((mod) => mod.initMembershipTypeList()).catch((err)=>console.log(err));
-      break;  
+      break;
+    case "/app":
+      import("/controllers/dashboard/admin.dashboard.js").then((mod) => mod.initAdminDashboard()).catch((err)=>console.log(err));
+      break;    
   }
 
 }

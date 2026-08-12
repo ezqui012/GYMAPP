@@ -1,1 +1,17 @@
-{}
+{
+    "rewrites": [
+    { "source": "/clientList", "destination": "/app/app.html" },
+    { "source": "/employeeList", "destination": "/app/app.html" },
+    { "source": "/registClient", "destination": "/app/app.html" },
+    { "source": "/registEmployee", "destination": "/app/app.html" },
+    { "source": "/editClient", "destination": "/app/app.html" },
+    { "source": "/editEmployee", "destination": "/app/app.html" },
+    { "source": "/membership", "destination": "/app/app.html" },
+    { "source": "/membershipList", "destination": "/app/app.html" },
+    { "source": "/editMembership", "destination": "/app/app.html" },
+    { "source": "/membershipType", "destination": "/app/app.html" },
+    { "source": "/membershipTypeList", "destination": "/app/app.html" },
+    { "source": "/editMembershipType", "destination": "/app/app.html" },
+    { "source": "/app", "destination": "/app/app.html" }
+  ]
+}

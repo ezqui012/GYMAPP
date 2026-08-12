@@ -53,7 +53,9 @@ export async function initMembership() {
         }
     }
     const loadLastMembership=async()=>{
+        console.log(clientId)
         const memberships= await getMembershipHistory(clientId);
+        console.log(memberships)
         const lastMembership=memberships[0];
         if(lastMembership){
             if(lastMembership.state==='expirado' || lastMembership.state==='anulado' || lastMembership.state==='activo'){

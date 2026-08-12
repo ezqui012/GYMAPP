@@ -20,3 +20,31 @@ export const loginService=async(email, password)=>{
     return null
   }
 }
+
+export const logoutService=async()=>{
+    try {
+      const response= await fetch(`${API_URL}/api/auth/logout`,{
+        method: 'POST',
+        credentials: "include"
+      })
+
+      if(!response.ok)throw new Error("Something went wrong");
+
+      return response.ok;
+      
+    } catch (error) {
+      return null
+    }
+}
+
+export const verifyAuth =async()=>{
+    try {
+      const response = await fetch(`${API_URL}/api/auth/verify`, {
+        credentials: "include"
+      })
+      if(!response.ok) return null
+      return  response.json();
+    } catch (error) {
+        return null;
+    }
+}

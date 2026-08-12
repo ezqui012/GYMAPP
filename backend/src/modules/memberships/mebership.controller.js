@@ -24,7 +24,7 @@ export const getMembership=async(req, res)=>{
 export const getMembershipHistory=async(req, res)=>{
     try {
         const {id}= req.params;
-        const memberships = await membershipService.getMembershipHistory(id);
+        const memberships = await membershipService.getMembershipHistory(parseInt(id));
         res.status(200).json(memberships);
     } catch (error) {
         res.status(500).json({message: error.message});

@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { cancelMembership, changeMembership, createMembership, getMembership, getMembershipHistory, getMemberships, updateMembership } from "./mebership.controller.js";
+import { verifyAuth } from "../../middlewares/auth.middleware.js";
+import { checkRole } from "../../middlewares/verifyRole.middleware.js"
 const router= Router();
 
 router.get('/getMemberships', getMemberships);

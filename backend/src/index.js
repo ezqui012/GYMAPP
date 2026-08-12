@@ -11,6 +11,7 @@ import clientRoutes from './modules/clients/client.routes.js';
 import employeeRoutes from './modules/employees/employee.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import userRoutes from './modules/users/users.routes.js'
+import dashboarRoutes from './modules/dashboard/dashboard.routes.js';
 import { methods as authorization } from "./middlewares/auth.middleware.js";
 const app=express();
 const ACCEPTED_ORIGINS=[
@@ -45,6 +46,7 @@ app.use('/api/auth', membershipRoutes);
 app.use('/api/auth', clientRoutes)
 app.use('/api/auth', employeeRoutes);
 app.use('/api/auth', userRoutes);
+app.use('/api/auth' , dashboarRoutes);
 
 
 

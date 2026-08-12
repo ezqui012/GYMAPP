@@ -4,7 +4,6 @@ export const getUsers=async()=>{
         const users= await pool.query(
                 `SELECT u.id_user, p.name, p.lastname, p.phone, p.email, p.nit  
                 FROM users u left join employee e left join person p ON p.id_person=e.id_employee ON e.id_employee=u.id_user`);
-        console.log(users.rows)
         return users.rows;
     } catch (error) {
         console.log(error)
